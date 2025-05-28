@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Bookmark, User } from 'lucide-react';
+import { MessageCircle, Bookmark, User, Share } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Post {
@@ -21,9 +21,10 @@ interface PostCardProps {
   onLike: (postId: string) => void;
   onSave: (postId: string) => void;
   onComment: (postId: string) => void;
+  onShare: (postId: string) => void;
 }
 
-const PostCard = ({ post, onLike, onSave, onComment }: PostCardProps) => {
+const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) => {
   const [localLikes, setLocalLikes] = useState(post.likes);
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [isSaved, setIsSaved] = useState(post.isSaved);
@@ -67,25 +68,33 @@ const PostCard = ({ post, onLike, onSave, onComment }: PostCardProps) => {
       </div>
 
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
           <button
             onClick={handleLike}
             className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors ${
               isLiked 
-                ? 'text-[#7B1F27] bg-[#F4C430]/10' 
-                : 'text-gray-600 hover:text-[#7B1F27] hover:bg-gray-50'
+                ? 'text-[#1877F2] bg-[#1877F2]/10' 
+                : 'text-gray-600 hover:text-[#1877F2] hover:bg-gray-50'
             }`}
           >
-            <span className={`text-lg ${isLiked ? 'text-[#7B1F27]' : ''}`}>👍</span>
+            <span className={`text-lg ${isLiked ? 'text-[#1877F2]' : ''}`}>👍</span>
             <span className="text-sm font-medium">{localLikes}</span>
           </button>
 
           <button
             onClick={() => onComment(post.id)}
-            className="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-600 hover:text-[#7B1F27] hover:bg-gray-50 transition-colors"
+            className="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-600 hover:text-[#1877F2] hover:bg-gray-50 transition-colors"
           >
             <MessageCircle size={16} />
             <span className="text-sm font-medium">{post.comments}</span>
+          </button>
+
+          <button
+            onClick={() => onShare(post.id)}
+            className="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-600 hover:text-[#1877F2] hover:bg-gray-50 transition-colors"
+          >
+            <Share size={16} />
+            <span className="text-sm font-medium">Share</span>
           </button>
         </div>
 

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Home, MessageCircle, User, Bell, Users } from 'lucide-react';
+import { Home, MessageCircle, Bell, Users } from 'lucide-react';
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -13,7 +13,6 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
     { id: 'messages', icon: MessageCircle, label: 'Messages' },
     { id: 'groups', icon: Users, label: 'Groups' },
     { id: 'notifications', icon: Bell, label: 'Notifications' },
-    { id: 'profile', icon: User, label: 'Profile' },
   ];
 
   return (
@@ -29,8 +28,8 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
               onClick={() => onTabChange(tab.id)}
               className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-colors ${
                 isActive 
-                  ? 'text-[#7B1F27] bg-[#F4C430]/10' 
-                  : 'text-gray-500 hover:text-[#7B1F27]'
+                  ? 'text-[#1877F2] bg-[#1877F2]/10' 
+                  : 'text-gray-500 hover:text-[#1877F2]'
               }`}
             >
               <Icon size={20} />

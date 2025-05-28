@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import LoginScreen from '@/components/auth/LoginScreen';
+import SignUpScreen from '@/components/auth/SignUpScreen';
+import ForgotPasswordScreen from '@/components/auth/ForgotPasswordScreen';
 import HomeFeed from '@/components/feed/HomeFeed';
 import MessagesScreen from '@/components/messages/MessagesScreen';
 import GroupsScreen from '@/components/groups/GroupsScreen';
@@ -12,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
+  const [authScreen, setAuthScreen] = useState<'login' | 'signup' | 'forgot'>('login');
   const { toast } = useToast();
 
   const handleLogin = (credentials: { email: string; password: string }) => {
@@ -32,11 +35,28 @@ const Index = () => {
     }
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = (credentials: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    console.log('Sign up attempt:', credentials);
     toast({
-      title: "Sign Up",
-      description: "Sign up functionality would be implemented here.",
+      title: "Account Created",
+      description: "Your account has been created successfully. Please sign in.",
     });
+    setAuthScreen('login');
+  };
+
+  const handleForgotPassword = (email: string) => {
+    console.log('Forgot password for:', email);
+    toast({
+      title: "Reset Link Sent",
+      description: "A password reset link has been sent to your email.",
+    });
+    setAuthScreen('login');
   };
 
   const handleCreatePost = () => {
@@ -58,6 +78,7 @@ const Index = () => {
     console.log('User logged out');
     setIsAuthenticated(false);
     setActiveTab('home');
+    setAuthScreen('login');
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
@@ -65,7 +86,30 @@ const Index = () => {
   };
 
   if (!isAuthenticated) {
-    return <LoginScreen onLogin={handleLogin} onSignUp={handleSignUp} />;
+    switch (authScreen) {
+      case 'signup':
+        return (
+          <SignUpScreen
+            onBack={() => setAuthScreen('login')}
+            onSubmit={handleSignUp}
+          />
+        );
+      case 'forgot':
+        return (
+          <ForgotPasswordScreen
+            onBack={() => setAuthScreen('login')}
+            onSubmit={handleForgotPassword}
+          />
+        );
+      default:
+        return (
+          <LoginScreen
+            onLogin={handleLogin}
+            onSignUp={() => setAuthScreen('signup')}
+            onForgotPassword={() => setAuthScreen('forgot')}
+          />
+        );
+    }
   }
 
   const renderActiveScreen = () => {

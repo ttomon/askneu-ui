@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { MessageCircle, User, Search } from 'lucide-react';
 import PostCard from './PostCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface HomeFeedProps {
   onCreatePost: () => void;
@@ -12,6 +12,7 @@ interface HomeFeedProps {
 }
 
 const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps) => {
+  const { toast } = useToast();
   const [posts, setPosts] = useState([
     {
       id: '1',
@@ -71,6 +72,16 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
     console.log('Opening comments for post:', postId);
   };
 
+  const handleShare = (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      toast({
+        title: "Post Shared",
+        description: `"${post.title}" has been shared to your timeline.`,
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
@@ -80,13 +91,13 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
           <div className="flex items-center space-x-3">
             <button 
               onClick={onOpenMessages}
-              className="p-2 rounded-lg text-gray-600 hover:text-[#7B1F27] hover:bg-gray-50 transition-colors"
+              className="p-2 rounded-lg text-gray-600 hover:text-[#1877F2] hover:bg-gray-50 transition-colors"
             >
               <MessageCircle size={20} />
             </button>
             <button 
               onClick={onOpenProfile}
-              className="p-2 rounded-lg text-gray-600 hover:text-[#7B1F27] hover:bg-gray-50 transition-colors"
+              className="p-2 rounded-lg text-gray-600 hover:text-[#1877F2] hover:bg-gray-50 transition-colors"
             >
               <User size={20} />
             </button>
@@ -97,7 +108,7 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
           <Input
             placeholder="Search questions, topics, or groups..."
-            className="pl-10 border-gray-300 focus:border-[#7B1F27] focus:ring-[#7B1F27]"
+            className="pl-10 border-gray-300 focus:border-[#1877F2] focus:ring-[#1877F2]"
           />
         </div>
       </div>
@@ -106,7 +117,7 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
       <div className="px-4 py-3">
         <Button
           onClick={onCreatePost}
-          className="w-full bg-[#7B1F27] hover:bg-[#5A1A1F] text-white py-3 rounded-lg font-medium transition-colors"
+          className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white py-3 rounded-lg font-medium transition-colors"
         >
           Ask a Question
         </Button>
@@ -118,7 +129,7 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
           {['Most Recent', 'Most Liked', 'Trending'].map((option) => (
             <button
               key={option}
-              className="px-3 py-2 text-sm rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-[#7B1F27] hover:border-[#7B1F27] transition-colors"
+              className="px-3 py-2 text-sm rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-[#1877F2] hover:border-[#1877F2] transition-colors"
             >
               {option}
             </button>
@@ -135,6 +146,7 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
             onLike={handleLike}
             onSave={handleSave}
             onComment={handleComment}
+            onShare={handleShare}
           />
         ))}
       </div>

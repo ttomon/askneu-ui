@@ -8,9 +8,10 @@ import Logo from '@/components/ui/logo';
 interface LoginScreenProps {
   onLogin: (credentials: { email: string; password: string }) => void;
   onSignUp: () => void;
+  onForgotPassword: () => void;
 }
 
-const LoginScreen = ({ onLogin, onSignUp }: LoginScreenProps) => {
+const LoginScreen = ({ onLogin, onSignUp, onForgotPassword }: LoginScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -41,7 +42,7 @@ const LoginScreen = ({ onLogin, onSignUp }: LoginScreenProps) => {
                 placeholder="juan.dela.cruz@neu.edu.ph"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 border-gray-300 focus:border-[#7B1F27] focus:ring-[#7B1F27]"
+                className="mt-1 border-gray-300 focus:border-[#1877F2] focus:ring-[#1877F2]"
                 required
               />
             </div>
@@ -56,7 +57,7 @@ const LoginScreen = ({ onLogin, onSignUp }: LoginScreenProps) => {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 border-gray-300 focus:border-[#7B1F27] focus:ring-[#7B1F27]"
+                className="mt-1 border-gray-300 focus:border-[#1877F2] focus:ring-[#1877F2]"
                 required
               />
             </div>
@@ -64,7 +65,7 @@ const LoginScreen = ({ onLogin, onSignUp }: LoginScreenProps) => {
 
           <Button 
             type="submit" 
-            className="w-full bg-[#7B1F27] hover:bg-[#5A1A1F] text-white py-3 rounded-lg font-medium transition-colors"
+            className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white py-3 rounded-lg font-medium transition-colors"
           >
             Sign In
           </Button>
@@ -72,7 +73,8 @@ const LoginScreen = ({ onLogin, onSignUp }: LoginScreenProps) => {
           <div className="text-center">
             <button
               type="button"
-              className="text-[#7B1F27] hover:underline text-sm font-medium"
+              onClick={onForgotPassword}
+              className="text-[#1877F2] hover:underline text-sm font-medium"
             >
               Forgot Password?
             </button>
@@ -84,7 +86,7 @@ const LoginScreen = ({ onLogin, onSignUp }: LoginScreenProps) => {
             Don't have an account?{' '}
             <button
               onClick={onSignUp}
-              className="text-[#7B1F27] hover:underline font-medium"
+              className="text-[#1877F2] hover:underline font-medium"
             >
               Sign up
             </button>
