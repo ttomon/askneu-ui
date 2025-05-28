@@ -1,9 +1,11 @@
 
 import React, { useState } from 'react';
-import { Bell, MessageCircle, Users, User } from 'lucide-react';
+import { Bell, MessageCircle, Users, User, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const NotificationsScreen = () => {
+  const [searchQuery, setSearchQuery] = useState('');
   const [notifications] = useState([
     {
       id: '1',
@@ -23,7 +25,7 @@ const NotificationsScreen = () => {
       time: '1h ago',
       isRead: false,
       icon: Bell,
-      color: 'text-[#7B1F27]',
+      color: 'text-[#2563EB]',
     },
     {
       id: '3',
@@ -50,15 +52,26 @@ const NotificationsScreen = () => {
   const [filter, setFilter] = useState('All');
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
+  const filteredNotifications = notifications.filter(notification => {
+    const matchesSearch = notification.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         notification.message.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (filter === 'Unread') return matchesSearch && !notification.isRead;
+    if (filter === 'Group') return matchesSearch && notification.type === 'group';
+    if (filter === 'Personal') return matchesSearch && notification.type !== 'group';
+    
+    return matchesSearch;
+  });
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-20">
       {/* Header */}
-      <div className="bg-white shadow-sm px-4 py-3">
-        <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-[#333]">
+      <div className="bg-white shadow-sm px-4 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold text-gray-800">
             Notifications
             {unreadCount > 0 && (
-              <span className="ml-2 bg-[#7B1F27] text-white text-xs px-2 py-1 rounded-full">
+              <span className="ml-2 bg-[#2563EB] text-white text-xs px-2 py-1 rounded-full">
                 {unreadCount}
               </span>
             )}
@@ -66,10 +79,21 @@ const NotificationsScreen = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-[#7B1F27] hover:bg-[#7B1F27]/10"
+            className="text-[#2563EB] hover:bg-[#2563EB]/10 rounded-xl"
           >
             Clear All
           </Button>
+        </div>
+
+        {/* Search */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+          <Input
+            placeholder="Search notifications..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 border-gray-300 focus:border-[#2563EB] focus:ring-[#2563EB] bg-gray-50 hover:bg-white transition-colors"
+          />
         </div>
         
         {/* Filter Tabs */}
@@ -78,10 +102,10 @@ const NotificationsScreen = () => {
             <button
               key={option}
               onClick={() => setFilter(option)}
-              className={`px-3 py-2 text-sm rounded-lg transition-colors ${
+              className={`px-4 py-2 text-sm rounded-xl transition-all duration-200 ${
                 filter === option
-                  ? 'bg-[#7B1F27] text-white'
-                  : 'bg-gray-100 text-gray-600 hover:text-[#7B1F27]'
+                  ? 'bg-[#2563EB] text-white shadow-md'
+                  : 'bg-gray-100 text-gray-600 hover:text-[#2563EB] hover:bg-[#2563EB]/5'
               }`}
             >
               {option}
@@ -90,9 +114,18 @@ const NotificationsScreen = () => {
         </div>
       </div>
 
+      {/* Search Results Info */}
+      {searchQuery && (
+        <div className="px-4 py-2 bg-white border-b border-gray-100">
+          <p className="text-sm text-gray-600">
+            Showing {filteredNotifications.length} results for "{searchQuery}"
+          </p>
+        </div>
+      )}
+
       {/* Notifications List */}
       <div className="bg-white">
-        {notifications.map((notification) => {
+        {filteredNotifications.map((notification) => {
           const Icon = notification.icon;
           
           return (
@@ -108,7 +141,7 @@ const NotificationsScreen = () => {
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between mb-1">
-                  <h3 className={`font-semibold text-sm ${!notification.isRead ? 'text-[#333]' : 'text-gray-700'}`}>
+                  <h3 className={`font-semibold text-sm ${!notification.isRead ? 'text-gray-800' : 'text-gray-700'}`}>
                     {notification.title}
                   </h3>
                   <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
@@ -119,7 +152,7 @@ const NotificationsScreen = () => {
                   {notification.message}
                 </p>
                 {!notification.isRead && (
-                  <div className="w-2 h-2 bg-[#7B1F27] rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-[#2563EB] rounded-full mt-2"></div>
                 )}
               </div>
             </div>
@@ -127,11 +160,21 @@ const NotificationsScreen = () => {
         })}
       </div>
 
-      {notifications.length === 0 && (
-        <div className="text-center py-12">
-          <Bell size={48} className="text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-500 mb-2">No notifications</h3>
-          <p className="text-gray-400">You're all caught up!</p>
+      {filteredNotifications.length === 0 && (
+        <div className="text-center py-12 bg-white">
+          {searchQuery ? (
+            <>
+              <Search size={48} className="text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-500 mb-2">No notifications found</h3>
+              <p className="text-gray-400">Try adjusting your search terms</p>
+            </>
+          ) : (
+            <>
+              <Bell size={48} className="text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-500 mb-2">No notifications</h3>
+              <p className="text-gray-400">You're all caught up!</p>
+            </>
+          )}
         </div>
       )}
     </div>

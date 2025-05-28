@@ -13,6 +13,7 @@ interface HomeFeedProps {
 
 const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps) => {
   const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState('');
   const [posts, setPosts] = useState([
     {
       id: '1',
@@ -52,6 +53,23 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
     },
   ]);
 
+  const filteredPosts = posts.filter(post => 
+    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.group.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      toast({
+        title: "Search Results",
+        description: `Found ${filteredPosts.length} results for "${query}"`,
+      });
+    }
+  };
+
   const handleLike = (postId: string) => {
     setPosts(posts.map(post => 
       post.id === postId 
@@ -83,21 +101,21 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-20">
       {/* Header */}
-      <div className="bg-white shadow-sm px-4 py-3">
-        <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-[#333]">Feed</h1>
+      <div className="bg-white shadow-sm px-4 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold text-gray-800">Feed</h1>
           <div className="flex items-center space-x-3">
             <button 
               onClick={onOpenMessages}
-              className="p-2 rounded-lg text-gray-600 hover:text-[#1877F2] hover:bg-gray-50 transition-colors"
+              className="p-2 rounded-lg text-gray-600 hover:text-[#2563EB] hover:bg-[#2563EB]/10 transition-all duration-200"
             >
               <MessageCircle size={20} />
             </button>
             <button 
               onClick={onOpenProfile}
-              className="p-2 rounded-lg text-gray-600 hover:text-[#1877F2] hover:bg-gray-50 transition-colors"
+              className="p-2 rounded-lg text-gray-600 hover:text-[#2563EB] hover:bg-[#2563EB]/10 transition-all duration-200"
             >
               <User size={20} />
             </button>
@@ -108,7 +126,9 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
           <Input
             placeholder="Search questions, topics, or groups..."
-            className="pl-10 border-gray-300 focus:border-[#1877F2] focus:ring-[#1877F2]"
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="pl-10 border-gray-300 focus:border-[#2563EB] focus:ring-[#2563EB] bg-gray-50 hover:bg-white transition-colors"
           />
         </div>
       </div>
@@ -117,7 +137,7 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
       <div className="px-4 py-3">
         <Button
           onClick={onCreatePost}
-          className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white py-3 rounded-lg font-medium transition-colors"
+          className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white py-3 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg"
         >
           Ask a Question
         </Button>
@@ -129,7 +149,7 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
           {['Most Recent', 'Most Liked', 'Trending'].map((option) => (
             <button
               key={option}
-              className="px-3 py-2 text-sm rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-[#1877F2] hover:border-[#1877F2] transition-colors"
+              className="px-4 py-2 text-sm rounded-xl bg-white border border-gray-200 text-gray-600 hover:text-[#2563EB] hover:border-[#2563EB] hover:bg-[#2563EB]/5 transition-all duration-200 shadow-sm"
             >
               {option}
             </button>
@@ -137,9 +157,18 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
         </div>
       </div>
 
+      {/* Search Results Info */}
+      {searchQuery && (
+        <div className="px-4 pb-2">
+          <p className="text-sm text-gray-600">
+            Showing {filteredPosts.length} results for "{searchQuery}"
+          </p>
+        </div>
+      )}
+
       {/* Posts */}
       <div className="space-y-0">
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <PostCard
             key={post.id}
             post={post}
@@ -150,6 +179,14 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
           />
         ))}
       </div>
+
+      {filteredPosts.length === 0 && searchQuery && (
+        <div className="text-center py-12">
+          <Search size={48} className="text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-500 mb-2">No results found</h3>
+          <p className="text-gray-400">Try adjusting your search terms</p>
+        </div>
+      )}
     </div>
   );
 };
