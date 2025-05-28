@@ -3,9 +3,9 @@ import React from 'react';
 
 const Logo = ({ size = 40 }: { size?: number }) => {
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex flex-col items-center space-y-1">
       <img 
-        src="/lovable-uploads/374525e7-897e-493c-bb20-7f41d97bda15.png" 
+        src="/lovable-uploads/9cb8bbbe-1a11-4c59-ac98-85adac17b418.png" 
         alt="AskNEU Logo"
         className="rounded-lg"
         style={{ width: size, height: size }}
