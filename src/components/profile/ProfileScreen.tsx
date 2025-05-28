@@ -1,10 +1,16 @@
 
 import React, { useState } from 'react';
-import { User, Bookmark, Users, Settings } from 'lucide-react';
+import { User, Bookmark, Users, Settings, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SettingsScreen from './SettingsScreen';
 
-const ProfileScreen = () => {
+interface ProfileScreenProps {
+  onLogout?: () => void;
+}
+
+const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
+  const [showSettings, setShowSettings] = useState(false);
   const [userStats] = useState({
     name: 'Juan Dela Cruz',
     email: 'juan.dela.cruz@neu.edu.ph',
@@ -16,15 +22,50 @@ const ProfileScreen = () => {
     reputation: 245,
   });
 
+  const handleLogout = () => {
+    console.log('User logging out');
+    if (onLogout) {
+      onLogout();
+    }
+  };
+
+  const handleSettingsClick = () => {
+    setShowSettings(true);
+  };
+
+  const handleBackFromSettings = () => {
+    setShowSettings(false);
+  };
+
+  if (showSettings) {
+    return (
+      <SettingsScreen
+        onBack={handleBackFromSettings}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
       <div className="bg-white shadow-sm px-4 py-3">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-[#333]">Profile</h1>
-          <button className="p-2 rounded-lg text-gray-600 hover:text-[#7B1F27] hover:bg-gray-50 transition-colors">
-            <Settings size={20} />
-          </button>
+          <div className="flex space-x-2">
+            <button 
+              onClick={handleSettingsClick}
+              className="p-2 rounded-lg text-gray-600 hover:text-[#7B1F27] hover:bg-gray-50 transition-colors"
+            >
+              <Settings size={20} />
+            </button>
+            <button 
+              onClick={handleLogout}
+              className="p-2 rounded-lg text-gray-600 hover:text-red-600 hover:bg-gray-50 transition-colors"
+            >
+              <LogOut size={20} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -59,6 +100,28 @@ const ProfileScreen = () => {
             <div className="text-2xl font-bold text-[#F4C430]">{userStats.reputation}</div>
             <div className="text-sm text-gray-600">Reputation</div>
           </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="mx-4 mt-4">
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            onClick={handleSettingsClick}
+            variant="outline"
+            className="border-[#7B1F27] text-[#7B1F27] hover:bg-[#7B1F27] hover:text-white"
+          >
+            <Settings size={16} className="mr-2" />
+            Settings
+          </Button>
+          <Button
+            onClick={handleLogout}
+            variant="destructive"
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            <LogOut size={16} className="mr-2" />
+            Logout
+          </Button>
         </div>
       </div>
 

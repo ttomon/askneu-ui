@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import { Search, User } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import ChatScreen from './ChatScreen';
 
 const MessagesScreen = () => {
+  const [selectedConversation, setSelectedConversation] = useState<{id: string, name: string} | null>(null);
   const [conversations] = useState([
     {
       id: '1',
@@ -43,6 +45,25 @@ const MessagesScreen = () => {
     },
   ]);
 
+  const handleConversationClick = (conversation: {id: string, name: string}) => {
+    console.log('Opening conversation:', conversation.name);
+    setSelectedConversation(conversation);
+  };
+
+  const handleBackFromChat = () => {
+    setSelectedConversation(null);
+  };
+
+  if (selectedConversation) {
+    return (
+      <ChatScreen
+        conversationId={selectedConversation.id}
+        conversationName={selectedConversation.name}
+        onBack={handleBackFromChat}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
@@ -66,6 +87,7 @@ const MessagesScreen = () => {
           <div
             key={conversation.id}
             className="flex items-center px-4 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+            onClick={() => handleConversationClick({id: conversation.id, name: conversation.name})}
           >
             <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-3">
               {conversation.isGroup ? (

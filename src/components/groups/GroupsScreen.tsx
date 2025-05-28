@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import { Search, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import GroupDetailScreen from './GroupDetailScreen';
 
 const GroupsScreen = () => {
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [groups] = useState([
     {
       id: '1',
@@ -65,6 +67,23 @@ const GroupsScreen = () => {
     );
   };
 
+  const handleGroupClick = (groupId: string) => {
+    setSelectedGroupId(groupId);
+  };
+
+  const handleBackFromDetail = () => {
+    setSelectedGroupId(null);
+  };
+
+  if (selectedGroupId) {
+    return (
+      <GroupDetailScreen
+        groupId={selectedGroupId}
+        onBack={handleBackFromDetail}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
@@ -104,7 +123,8 @@ const GroupsScreen = () => {
           return (
             <div
               key={group.id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow"
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => handleGroupClick(group.id)}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3 flex-1">
@@ -127,7 +147,10 @@ const GroupsScreen = () => {
                 </div>
                 
                 <Button
-                  onClick={() => handleJoinToggle(group.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleJoinToggle(group.id);
+                  }}
                   variant={isJoined ? "outline" : "default"}
                   className={`ml-3 ${
                     isJoined 

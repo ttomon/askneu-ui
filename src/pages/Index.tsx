@@ -54,6 +54,16 @@ const Index = () => {
     setActiveTab('profile');
   };
 
+  const handleLogout = () => {
+    console.log('User logged out');
+    setIsAuthenticated(false);
+    setActiveTab('home');
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+  };
+
   if (!isAuthenticated) {
     return <LoginScreen onLogin={handleLogin} onSignUp={handleSignUp} />;
   }
@@ -75,7 +85,7 @@ const Index = () => {
       case 'notifications':
         return <NotificationsScreen />;
       case 'profile':
-        return <ProfileScreen />;
+        return <ProfileScreen onLogout={handleLogout} />;
       default:
         return (
           <HomeFeed
