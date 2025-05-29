@@ -1,10 +1,12 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, User, Bell, Shield, LogOut, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useTheme } from '@/contexts/ThemeContext';
+import ProfilePhotoEditor from './ProfilePhotoEditor';
 
 interface SettingsScreenProps {
   onBack: () => void;
@@ -12,13 +14,15 @@ interface SettingsScreenProps {
 }
 
 const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
+  const { isDarkMode } = useTheme();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profile, setProfile] = useState({
     name: 'Juan Dela Cruz',
     email: 'juan.dela.cruz@neu.edu.ph',
     course: 'BS Computer Science',
     year: '3rd Year',
-    bio: 'Computer Science student passionate about web development and AI.'
+    bio: 'Computer Science student passionate about web development and AI.',
+    profilePhoto: ''
   });
 
   const [notifications, setNotifications] = useState({
@@ -33,29 +37,41 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
     // Here you would typically save to backend
   };
 
+  const handlePhotoChange = (photoUrl: string) => {
+    setProfile({...profile, profilePhoto: photoUrl});
+  };
+
   const handleLogout = () => {
     onLogout();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className={`min-h-screen pb-20 transition-colors max-w-md mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className="bg-white shadow-sm px-4 py-3">
+      <div className={`shadow-sm px-4 py-3 transition-colors ${
+        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+      }`}>
         <div className="flex items-center space-x-3">
           <button
             onClick={onBack}
-            className="p-2 rounded-lg text-gray-600 hover:text-[#7B1F27] hover:bg-gray-50 transition-colors"
+            className={`p-2 rounded-lg transition-colors ${
+              isDarkMode 
+                ? 'text-gray-300 hover:text-white hover:bg-gray-700' 
+                : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+            }`}
           >
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-xl font-bold text-[#333]">Settings</h1>
+          <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Settings</h1>
         </div>
       </div>
 
       {/* Profile Section */}
-      <div className="bg-white mx-4 mt-4 rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className={`mx-4 mt-4 rounded-lg shadow-sm border p-6 transition-colors ${
+        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+      }`}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-[#333] flex items-center">
+          <h2 className={`text-lg font-bold flex items-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             <User size={20} className="mr-2" />
             Profile
           </h2>
@@ -63,7 +79,11 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
             variant="outline"
             size="sm"
             onClick={() => setIsEditingProfile(!isEditingProfile)}
-            className="border-[#7B1F27] text-[#7B1F27]"
+            className={`${
+              isDarkMode 
+                ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+                : 'border-red-600 text-red-600 hover:bg-red-50'
+            }`}
           >
             <Edit size={16} className="mr-1" />
             {isEditingProfile ? 'Cancel' : 'Edit'}
@@ -72,13 +92,24 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
 
         {isEditingProfile ? (
           <div className="space-y-4">
+            <div className="flex justify-center mb-4">
+              <ProfilePhotoEditor 
+                onPhotoChange={handlePhotoChange}
+                currentPhoto={profile.profilePhoto}
+                isDarkMode={isDarkMode}
+              />
+            </div>
             <div>
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name" className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>Full Name</Label>
               <Input
                 id="name"
                 value={profile.name}
                 onChange={(e) => setProfile({...profile, name: e.target.value})}
-                className="mt-1"
+                className={`mt-1 ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300'
+                }`}
               />
             </div>
             <div>
@@ -110,13 +141,13 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
             </div>
             <Button
               onClick={handleSaveProfile}
-              className="bg-[#7B1F27] hover:bg-[#5A1A1F] text-white"
+              className="bg-red-600 hover:bg-red-700 text-white"
             >
               Save Changes
             </Button>
           </div>
         ) : (
-          <div className="space-y-2 text-sm text-gray-600">
+          <div className={`space-y-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             <p><span className="font-medium">Name:</span> {profile.name}</p>
             <p><span className="font-medium">Email:</span> {profile.email}</p>
             <p><span className="font-medium">Course:</span> {profile.course}</p>
@@ -127,14 +158,16 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
       </div>
 
       {/* Notifications Section */}
-      <div className="bg-white mx-4 mt-4 rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-bold text-[#333] flex items-center mb-4">
+      <div className={`mx-4 mt-4 rounded-lg shadow-sm border p-6 transition-colors ${
+        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+      }`}>
+        <h2 className={`text-lg font-bold flex items-center mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
           <Bell size={20} className="mr-2" />
           Notifications
         </h2>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-700">Push Notifications</span>
+            <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Push Notifications</span>
             <Switch
               checked={notifications.pushNotifications}
               onCheckedChange={(checked) => setNotifications({...notifications, pushNotifications: checked})}
@@ -165,19 +198,27 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
       </div>
 
       {/* Privacy Section */}
-      <div className="bg-white mx-4 mt-4 rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-bold text-[#333] flex items-center mb-4">
+      <div className={`mx-4 mt-4 rounded-lg shadow-sm border p-6 transition-colors ${
+        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+      }`}>
+        <h2 className={`text-lg font-bold flex items-center mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
           <Shield size={20} className="mr-2" />
           Privacy
         </h2>
-        <div className="space-y-2 text-sm text-gray-600">
-          <button className="text-left hover:text-[#7B1F27] transition-colors">
+        <div className={`space-y-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <button className={`text-left transition-colors ${
+            isDarkMode ? 'hover:text-red-400' : 'hover:text-red-600'
+          }`}>
             Block Users
           </button>
-          <button className="text-left hover:text-[#7B1F27] transition-colors">
+          <button className={`text-left transition-colors ${
+            isDarkMode ? 'hover:text-red-400' : 'hover:text-red-600'
+          }`}>
             Privacy Policy
           </button>
-          <button className="text-left hover:text-[#7B1F27] transition-colors">
+          <button className={`text-left transition-colors ${
+            isDarkMode ? 'hover:text-red-400' : 'hover:text-red-600'
+          }`}>
             Terms of Service
           </button>
         </div>
@@ -185,14 +226,38 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
 
       {/* Logout Section */}
       <div className="mx-4 mt-4">
-        <Button
-          onClick={handleLogout}
-          variant="destructive"
-          className="w-full bg-red-600 hover:bg-red-700 text-white"
-        >
-          <LogOut size={20} className="mr-2" />
-          Logout
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              className="w-full bg-red-600 hover:bg-red-700 text-white"
+            >
+              <LogOut size={20} className="mr-2" />
+              Logout
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className={isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}>
+            <AlertDialogHeader>
+              <AlertDialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>
+                Are you sure you want to logout?
+              </AlertDialogTitle>
+              <AlertDialogDescription className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+                You will be signed out of your account and redirected to the login screen.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className={isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : ''}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                Logout
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

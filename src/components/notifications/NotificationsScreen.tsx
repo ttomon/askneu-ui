@@ -1,10 +1,11 @@
-
 import React, { useState } from 'react';
 import { Search, Bell, Heart, MessageCircle, Users, User } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const NotificationsScreen = () => {
+  const { isDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [notifications] = useState([
     {
@@ -70,53 +71,71 @@ const NotificationsScreen = () => {
       case 'follow':
         return 'text-purple-500';
       default:
-        return 'text-gray-500';
+        return isDarkMode ? 'text-gray-400' : 'text-gray-500';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className={`min-h-screen pb-20 transition-colors max-w-md mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className="bg-white shadow-sm px-4 py-4 border-b border-gray-100">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Notifications</h1>
+      <div className={`shadow-sm px-4 py-4 border-b transition-colors ${
+        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+      }`}>
+        <h1 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Notifications</h1>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+          <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} size={16} />
           <Input
             placeholder="Search notifications..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 border-gray-300 focus:border-[#2563EB] focus:ring-[#2563EB] bg-gray-50 hover:bg-white transition-colors"
+            className={`pl-10 transition-colors ${
+              isDarkMode 
+                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' 
+                : 'border-gray-300 bg-gray-50 hover:bg-white focus:border-blue-600 focus:ring-blue-600'
+            }`}
           />
         </div>
       </div>
 
       {/* Notifications List */}
       <ScrollArea className="h-[calc(100vh-200px)]">
-        <div className="divide-y divide-gray-100">
+        <div className={`divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-100'}`}>
           {filteredNotifications.map((notification) => {
             const IconComponent = notification.icon;
             return (
               <div
                 key={notification.id}
-                className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                  !notification.isRead ? 'bg-blue-50 border-l-4 border-l-[#2563EB]' : ''
+                className={`p-4 cursor-pointer transition-colors ${
+                  !notification.isRead 
+                    ? isDarkMode 
+                      ? 'bg-blue-900/30 border-l-4 border-l-blue-500' 
+                      : 'bg-blue-50 border-l-4 border-l-blue-600'
+                    : isDarkMode 
+                      ? 'hover:bg-gray-700' 
+                      : 'hover:bg-gray-50'
                 }`}
               >
                 <div className="flex items-start space-x-3">
-                  <div className={`w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center ${getIconColor(notification.type)}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+                  } ${getIconColor(notification.type)}`}>
                     <IconComponent size={18} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className={`font-medium ${!notification.isRead ? 'text-gray-900' : 'text-gray-700'}`}>
+                      <h3 className={`font-medium ${
+                        !notification.isRead 
+                          ? isDarkMode ? 'text-white' : 'text-gray-900'
+                          : isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>
                         {notification.title}
                       </h3>
-                      <span className="text-xs text-gray-500">{notification.time}</span>
+                      <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{notification.time}</span>
                     </div>
-                    <p className="text-sm text-gray-600">{notification.description}</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{notification.description}</p>
                   </div>
                   {!notification.isRead && (
-                    <div className="w-2 h-2 bg-[#2563EB] rounded-full"></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                   )}
                 </div>
               </div>
@@ -127,17 +146,17 @@ const NotificationsScreen = () => {
 
       {filteredNotifications.length === 0 && searchQuery && (
         <div className="text-center py-12">
-          <Search size={48} className="text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-500 mb-2">No notifications found</h3>
-          <p className="text-gray-400">Try adjusting your search terms</p>
+          <Search size={48} className={`mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-300'}`} />
+          <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No notifications found</h3>
+          <p className={isDarkMode ? 'text-gray-500' : 'text-gray-400'}>Try adjusting your search terms</p>
         </div>
       )}
 
       {filteredNotifications.length === 0 && !searchQuery && (
         <div className="text-center py-12">
-          <Bell size={48} className="text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-500 mb-2">No notifications</h3>
-          <p className="text-gray-400">You're all caught up!</p>
+          <Bell size={48} className={`mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-300'}`} />
+          <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No notifications</h3>
+          <p className={isDarkMode ? 'text-gray-500' : 'text-gray-400'}>You're all caught up!</p>
         </div>
       )}
     </div>

@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { User, Search } from 'lucide-react';
 import PostCard from './PostCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface HomeFeedProps {
   onCreatePost: () => void;
@@ -14,6 +14,7 @@ interface HomeFeedProps {
 
 const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps) => {
   const { toast } = useToast();
+  const { isDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('recent');
   const [posts, setPosts] = useState([
@@ -112,26 +113,36 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className={`min-h-screen pb-20 transition-colors ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} max-w-md mx-auto`}>
       {/* Header */}
-      <div className="bg-white shadow-sm px-4 py-4 border-b border-gray-100">
+      <div className={`shadow-sm px-4 py-4 border-b transition-colors ${
+        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+      }`}>
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-800">Feed</h1>
+          <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Feed</h1>
           <button 
             onClick={onOpenProfile}
-            className="p-2 rounded-lg text-gray-600 hover:text-[#2563EB] hover:bg-[#2563EB]/10 transition-all duration-200"
+            className={`p-2 rounded-lg transition-all duration-200 ${
+              isDarkMode 
+                ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-700' 
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+            }`}
           >
             <User size={20} />
           </button>
         </div>
         
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+          <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} size={16} />
           <Input
             placeholder="Search questions, topics, or groups..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 border-gray-300 focus:border-[#2563EB] focus:ring-[#2563EB] bg-gray-50 hover:bg-white transition-colors"
+            className={`pl-10 transition-colors ${
+              isDarkMode 
+                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' 
+                : 'border-gray-300 bg-gray-50 hover:bg-white focus:border-blue-600 focus:ring-blue-600'
+            }`}
           />
         </div>
       </div>
@@ -140,9 +151,13 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
       <div className="px-4 py-3">
         <Button
           onClick={onCreatePost}
-          className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white py-3 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+          className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] animate-pulse"
+          style={{
+            boxShadow: '0 0 20px rgba(239, 68, 68, 0.4)',
+            animation: 'glow 2s ease-in-out infinite alternate'
+          }}
         >
-          Ask a Question
+          ✨ Ask a Question
         </Button>
       </div>
 
@@ -159,8 +174,10 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
               onClick={() => setSortBy(option.id)}
               className={`px-4 py-2 text-sm rounded-xl transition-all duration-200 shadow-sm ${
                 sortBy === option.id
-                  ? 'bg-[#2563EB] text-white'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:text-[#2563EB] hover:border-[#2563EB] hover:bg-[#2563EB]/5'
+                  ? 'bg-blue-600 text-white'
+                  : isDarkMode
+                    ? 'bg-gray-800 border border-gray-600 text-gray-300 hover:text-blue-400 hover:border-blue-500 hover:bg-gray-700'
+                    : 'bg-white border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-600 hover:bg-blue-50'
               }`}
             >
               {option.label}
@@ -185,11 +202,22 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
 
       {filteredAndSortedPosts.length === 0 && searchQuery && (
         <div className="text-center py-12">
-          <Search size={48} className="text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-500 mb-2">No results found</h3>
-          <p className="text-gray-400">Try adjusting your search terms</p>
+          <Search size={48} className={`mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-300'}`} />
+          <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No results found</h3>
+          <p className={isDarkMode ? 'text-gray-500' : 'text-gray-400'}>Try adjusting your search terms</p>
         </div>
       )}
+
+      <style>{`
+        @keyframes glow {
+          from {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+          }
+          to {
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+          }
+        }
+      `}</style>
     </div>
   );
 };

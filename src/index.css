@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -97,5 +91,49 @@
 
   body {
     @apply bg-background text-foreground;
+    /* Force mobile-only layout */
+    max-width: 480px;
+    margin: 0 auto;
+    overflow-x: hidden;
   }
+
+  /* Hide scrollbars on mobile for better UX */
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+
+  /* Ensure all containers respect mobile layout */
+  .container {
+    max-width: 480px !important;
+    padding: 0 !important;
+  }
+
+  /* Force mobile viewport */
+  @media (min-width: 481px) {
+    body {
+      border-left: 1px solid #e5e7eb;
+      border-right: 1px solid #e5e7eb;
+      min-height: 100vh;
+    }
+    
+    .dark body {
+      border-left: 1px solid #374151;
+      border-right: 1px solid #374151;
+    }
+  }
+}
+
+/* Glowing animation for Ask Question button */
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+  }
+}
+
+.glow-button {
+  animation: glow 2s ease-in-out infinite alternate;
 }

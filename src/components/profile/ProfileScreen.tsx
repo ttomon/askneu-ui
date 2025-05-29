@@ -4,7 +4,6 @@ import { User, Bookmark, Users, Settings, LogOut, Moon, Sun, Eye } from 'lucide-
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTheme } from '@/contexts/ThemeContext';
-import ProfilePhotoEditor from './ProfilePhotoEditor';
 import SettingsScreen from './SettingsScreen';
 import GroupDetailScreen from '../groups/GroupDetailScreen';
 
@@ -102,7 +101,7 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
   }
 
   return (
-    <div className={`min-h-screen pb-20 transition-colors ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen pb-20 transition-colors max-w-md mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
       <div className={`shadow-sm px-4 py-3 transition-colors ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <div className="flex items-center justify-between">
@@ -147,11 +146,13 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
         isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
       }`}>
         <div className="flex items-center space-x-4 mb-4">
-          <ProfilePhotoEditor 
-            onPhotoChange={handlePhotoChange}
-            currentPhoto={userStats.profilePhoto}
-            isDarkMode={isDarkMode}
-          />
+          <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
+            {userStats.profilePhoto ? (
+              <img src={userStats.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <User size={32} className="text-white" />
+            )}
+          </div>
           <div className="flex-1">
             <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{userStats.name}</h2>
             <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{userStats.email}</p>
