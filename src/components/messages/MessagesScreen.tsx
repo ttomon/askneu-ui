@@ -57,9 +57,11 @@ const MessagesScreen = () => {
   );
 
   if (selectedChat) {
+    const selectedConversation = conversations.find(conv => conv.id === selectedChat);
     return (
       <ChatScreen
         conversationId={selectedChat}
+        conversationName={selectedConversation?.name || 'Unknown'}
         onBack={() => setSelectedChat(null)}
       />
     );
