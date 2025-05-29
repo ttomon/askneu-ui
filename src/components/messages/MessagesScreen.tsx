@@ -1,87 +1,79 @@
 
 import React, { useState } from 'react';
-import { Search, User } from 'lucide-react';
+import { Search, MessageCircle, User, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import ChatScreen from './ChatScreen';
 
 const MessagesScreen = () => {
-  const [selectedConversation, setSelectedConversation] = useState<{id: string, name: string} | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedChat, setSelectedChat] = useState<string | null>(null);
   const [conversations] = useState([
     {
       id: '1',
-      name: 'EduTech Group',
-      lastMessage: "Don't forget the Zoom link for our UI/UX webinar later.",
+      name: 'Study Group - Research101',
+      lastMessage: 'Thanks for the citation help!',
       time: '2m ago',
       unread: 2,
       isGroup: true,
-      avatar: '🟡',
     },
     {
       id: '2',
-      name: 'Prof. Santos',
-      lastMessage: 'Please revise your assignment per the new rubric.',
+      name: 'Ana Reyes',
+      lastMessage: 'Did you finish the assignment?',
       time: '1h ago',
-      unread: 1,
+      unread: 0,
       isGroup: false,
-      avatar: '🟢',
     },
     {
       id: '3',
-      name: 'WebDev101',
-      lastMessage: "Who's free for a meeting this Friday?",
+      name: 'WebDev101 Group',
+      lastMessage: 'New React tutorial shared',
       time: '3h ago',
-      unread: 0,
+      unread: 5,
       isGroup: true,
-      avatar: '🟡',
     },
     {
       id: '4',
-      name: 'Ana Reyes',
-      lastMessage: 'Thanks for helping with the APA citation!',
+      name: 'Mark Santos',
+      lastMessage: 'See you at the library',
       time: '1d ago',
       unread: 0,
       isGroup: false,
-      avatar: '🔵',
+    },
+    {
+      id: '5',
+      name: 'Sofia Chen',
+      lastMessage: 'Math study session tomorrow?',
+      time: '2d ago',
+      unread: 1,
+      isGroup: false,
     },
   ]);
 
-  const filteredConversations = conversations.filter(conversation =>
-    conversation.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    conversation.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredConversations = conversations.filter(conv =>
+    conv.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    conv.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleConversationClick = (conversation: {id: string, name: string}) => {
-    console.log('Opening conversation:', conversation.name);
-    setSelectedConversation(conversation);
-  };
-
-  const handleBackFromChat = () => {
-    setSelectedConversation(null);
-  };
-
-  if (selectedConversation) {
+  if (selectedChat) {
     return (
       <ChatScreen
-        conversationId={selectedConversation.id}
-        conversationName={selectedConversation.name}
-        onBack={handleBackFromChat}
+        conversationId={selectedChat}
+        onBack={() => setSelectedChat(null)}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-20">
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
       <div className="bg-white shadow-sm px-4 py-4 border-b border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-800">Messages</h1>
-        </div>
-        
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Messages</h1>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
           <Input
-            placeholder="Find Groups or Individuals"
+            placeholder="Search conversations..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 border-gray-300 focus:border-[#2563EB] focus:ring-[#2563EB] bg-gray-50 hover:bg-white transition-colors"
@@ -89,61 +81,48 @@ const MessagesScreen = () => {
         </div>
       </div>
 
-      {/* Search Results Info */}
-      {searchQuery && (
-        <div className="px-4 py-2 bg-white border-b border-gray-100">
-          <p className="text-sm text-gray-600">
-            Showing {filteredConversations.length} results for "{searchQuery}"
-          </p>
+      {/* Conversations List */}
+      <ScrollArea className="h-[calc(100vh-200px)]">
+        <div className="divide-y divide-gray-100">
+          {filteredConversations.map((conversation) => (
+            <div
+              key={conversation.id}
+              onClick={() => setSelectedChat(conversation.id)}
+              className="p-4 hover:bg-gray-50 cursor-pointer transition-colors active:bg-gray-100"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 rounded-full bg-[#2563EB] flex items-center justify-center">
+                  {conversation.isGroup ? (
+                    <MessageCircle size={20} className="text-white" />
+                  ) : (
+                    <User size={20} className="text-white" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-semibold text-gray-900 truncate">{conversation.name}</h3>
+                    <span className="text-xs text-gray-500">{conversation.time}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-600 truncate">{conversation.lastMessage}</p>
+                    {conversation.unread > 0 && (
+                      <span className="bg-[#2563EB] text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
+                        {conversation.unread}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
-
-      {/* Conversations */}
-      <div className="bg-white">
-        {filteredConversations.map((conversation) => (
-          <div
-            key={conversation.id}
-            className="flex items-center px-4 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
-            onClick={() => handleConversationClick({id: conversation.id, name: conversation.name})}
-          >
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mr-3 shadow-sm">
-              {conversation.isGroup ? (
-                <span className="text-lg">{conversation.avatar}</span>
-              ) : (
-                <User size={20} className="text-gray-600" />
-              )}
-            </div>
-            
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="font-semibold text-gray-800 truncate">
-                  {conversation.name}
-                </h3>
-                <span className="text-xs text-gray-500 flex-shrink-0">
-                  {conversation.time}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 truncate">
-                {conversation.lastMessage}
-              </p>
-            </div>
-            
-            {conversation.unread > 0 && (
-              <div className="w-6 h-6 bg-[#2563EB] rounded-full flex items-center justify-center ml-2 shadow-sm">
-                <span className="text-white text-xs font-bold">
-                  {conversation.unread}
-                </span>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      </ScrollArea>
 
       {filteredConversations.length === 0 && searchQuery && (
-        <div className="text-center py-12 bg-white">
+        <div className="text-center py-12">
           <Search size={48} className="text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-500 mb-2">No messages found</h3>
-          <p className="text-gray-400">Try searching with different keywords</p>
+          <h3 className="text-lg font-semibold text-gray-500 mb-2">No conversations found</h3>
+          <p className="text-gray-400">Try adjusting your search terms</p>
         </div>
       )}
     </div>

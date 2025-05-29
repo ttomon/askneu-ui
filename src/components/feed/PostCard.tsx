@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Bookmark, User, Share } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { MessageCircle, Bookmark, User, Share, Heart } from 'lucide-react';
 
 interface Post {
   id: string;
@@ -41,11 +40,11 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4 mx-4">
+    <div className="bg-white shadow-sm border-b border-gray-100 p-4">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
-            <span className="inline-block bg-[#7B1F27] text-white text-xs px-2 py-1 rounded-full font-medium">
+            <span className="inline-block bg-[#2563EB] text-white text-xs px-2 py-1 rounded-full font-medium">
               #{post.group}
             </span>
           </div>
@@ -68,22 +67,22 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
       </div>
 
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
           <button
             onClick={handleLike}
-            className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors ${
+            className={`flex items-center space-x-1 transition-colors ${
               isLiked 
-                ? 'text-[#1877F2] bg-[#1877F2]/10' 
-                : 'text-gray-600 hover:text-[#1877F2] hover:bg-gray-50'
+                ? 'text-red-500' 
+                : 'text-gray-600 hover:text-red-500'
             }`}
           >
-            <span className={`text-lg ${isLiked ? 'text-[#1877F2]' : ''}`}>👍</span>
+            <Heart size={16} fill={isLiked ? 'currentColor' : 'none'} />
             <span className="text-sm font-medium">{localLikes}</span>
           </button>
 
           <button
             onClick={() => onComment(post.id)}
-            className="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-600 hover:text-[#1877F2] hover:bg-gray-50 transition-colors"
+            className="flex items-center space-x-1 text-gray-600 hover:text-[#2563EB] transition-colors"
           >
             <MessageCircle size={16} />
             <span className="text-sm font-medium">{post.comments}</span>
@@ -91,7 +90,7 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
 
           <button
             onClick={() => onShare(post.id)}
-            className="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-600 hover:text-[#1877F2] hover:bg-gray-50 transition-colors"
+            className="flex items-center space-x-1 text-gray-600 hover:text-[#2563EB] transition-colors"
           >
             <Share size={16} />
             <span className="text-sm font-medium">Share</span>
@@ -100,10 +99,10 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
 
         <button
           onClick={handleSave}
-          className={`p-2 rounded-lg transition-colors ${
+          className={`transition-colors ${
             isSaved 
-              ? 'text-[#F4C430] bg-[#F4C430]/10' 
-              : 'text-gray-600 hover:text-[#F4C430] hover:bg-gray-50'
+              ? 'text-blue-500' 
+              : 'text-gray-600 hover:text-blue-500'
           }`}
         >
           <Bookmark size={16} fill={isSaved ? 'currentColor' : 'none'} />

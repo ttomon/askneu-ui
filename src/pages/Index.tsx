@@ -4,6 +4,7 @@ import LoginScreen from '@/components/auth/LoginScreen';
 import SignUpScreen from '@/components/auth/SignUpScreen';
 import ForgotPasswordScreen from '@/components/auth/ForgotPasswordScreen';
 import HomeFeed from '@/components/feed/HomeFeed';
+import AskQuestionModal from '@/components/feed/AskQuestionModal';
 import MessagesScreen from '@/components/messages/MessagesScreen';
 import GroupsScreen from '@/components/groups/GroupsScreen';
 import NotificationsScreen from '@/components/notifications/NotificationsScreen';
@@ -15,6 +16,7 @@ const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
   const [authScreen, setAuthScreen] = useState<'login' | 'signup' | 'forgot'>('login');
+  const [showAskQuestion, setShowAskQuestion] = useState(false);
   const { toast } = useToast();
 
   const handleLogin = (credentials: { email: string; password: string }) => {
@@ -60,10 +62,12 @@ const Index = () => {
   };
 
   const handleCreatePost = () => {
-    toast({
-      title: "Create Post",
-      description: "Post creation modal would open here.",
-    });
+    setShowAskQuestion(true);
+  };
+
+  const handleSubmitQuestion = (question: any) => {
+    console.log('New question submitted:', question);
+    // Here you would typically send the question to your backend
   };
 
   const handleOpenMessages = () => {
@@ -145,6 +149,11 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50">
       {renderActiveScreen()}
       <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <AskQuestionModal
+        isOpen={showAskQuestion}
+        onClose={() => setShowAskQuestion(false)}
+        onSubmit={handleSubmitQuestion}
+      />
     </div>
   );
 };
