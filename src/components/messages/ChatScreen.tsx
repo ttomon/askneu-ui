@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Send, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ChatScreenProps {
   conversationId: string;
@@ -11,6 +12,7 @@ interface ChatScreenProps {
 }
 
 const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProps) => {
+  const { isDarkMode } = useTheme();
   const [newMessage, setNewMessage] = useState('');
   const [messages] = useState([
     {
@@ -38,29 +40,32 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      // Here you would typically send the message to backend
       console.log('Sending message:', newMessage);
       setNewMessage('');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className={`min-h-screen flex flex-col max-w-md mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className="bg-white shadow-sm px-4 py-3 flex-shrink-0">
+      <div className={`shadow-sm px-4 py-3 flex-shrink-0 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <div className="flex items-center space-x-3">
           <button
             onClick={onBack}
-            className="p-2 rounded-lg text-gray-600 hover:text-[#7B1F27] hover:bg-gray-50 transition-colors"
+            className={`p-2 rounded-lg transition-colors ${
+              isDarkMode 
+                ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-700' 
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+            }`}
           >
             <ArrowLeft size={20} />
           </button>
-          <div className="w-10 h-10 rounded-full bg-[#7B1F27] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
             <User size={18} className="text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[#333]">{conversationName}</h1>
-            <p className="text-xs text-gray-500">Online</p>
+            <h1 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{conversationName}</h1>
+            <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Online</p>
           </div>
         </div>
       </div>
@@ -75,12 +80,18 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
             <div
               className={`max-w-xs px-4 py-2 rounded-lg ${
                 message.isOwn
-                  ? 'bg-[#7B1F27] text-white'
-                  : 'bg-white border border-gray-200 text-gray-800'
+                  ? 'bg-blue-600 text-white'
+                  : isDarkMode 
+                    ? 'bg-gray-700 border border-gray-600 text-gray-200'
+                    : 'bg-white border border-gray-200 text-gray-800'
               }`}
             >
               <p className="text-sm">{message.text}</p>
-              <p className={`text-xs mt-1 ${message.isOwn ? 'text-gray-200' : 'text-gray-500'}`}>
+              <p className={`text-xs mt-1 ${
+                message.isOwn 
+                  ? 'text-blue-100' 
+                  : isDarkMode ? 'text-gray-400' : 'text-gray-500'
+              }`}>
                 {message.time}
               </p>
             </div>
@@ -89,18 +100,24 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
       </div>
 
       {/* Message Input */}
-      <div className="bg-white border-t border-gray-200 p-4 flex-shrink-0">
+      <div className={`border-t p-4 flex-shrink-0 ${
+        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+      }`}>
         <div className="flex space-x-2">
           <Input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 border-gray-300 focus:border-[#7B1F27] focus:ring-[#7B1F27]"
+            className={`flex-1 ${
+              isDarkMode 
+                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500'
+                : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+            }`}
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
           />
           <Button
             onClick={handleSendMessage}
-            className="bg-[#7B1F27] hover:bg-[#5A1A1F] text-white"
+            className="bg-blue-600 hover:bg-blue-700 text-white"
             size="sm"
           >
             <Send size={16} />

@@ -1,12 +1,15 @@
+
 import React, { useState } from 'react';
 import { Search, Bell, Heart, MessageCircle, Users, User } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useTheme } from '@/contexts/ThemeContext';
+import NotificationDetailScreen from './NotificationDetailScreen';
 
 const NotificationsScreen = () => {
   const { isDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedNotificationId, setSelectedNotificationId] = useState<string | null>(null);
   const [notifications] = useState([
     {
       id: '1',
@@ -75,6 +78,19 @@ const NotificationsScreen = () => {
     }
   };
 
+  const handleNotificationClick = (notificationId: string) => {
+    setSelectedNotificationId(notificationId);
+  };
+
+  if (selectedNotificationId) {
+    return (
+      <NotificationDetailScreen
+        notificationId={selectedNotificationId}
+        onBack={() => setSelectedNotificationId(null)}
+      />
+    );
+  }
+
   return (
     <div className={`min-h-screen pb-20 transition-colors max-w-md mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
@@ -105,6 +121,7 @@ const NotificationsScreen = () => {
             return (
               <div
                 key={notification.id}
+                onClick={() => handleNotificationClick(notification.id)}
                 className={`p-4 cursor-pointer transition-colors ${
                   !notification.isRead 
                     ? isDarkMode 
