@@ -6,6 +6,15 @@ import { Input } from '@/components/ui/input';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useToast } from '@/hooks/use-toast';
 
+interface Message {
+  id: string;
+  text: string;
+  sender: string;
+  time: string;
+  isOwn: boolean;
+  replyTo?: Message;
+}
+
 interface ChatScreenProps {
   conversationId: string;
   conversationName: string;
@@ -16,8 +25,8 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
   const { isDarkMode } = useTheme();
   const { toast } = useToast();
   const [newMessage, setNewMessage] = useState('');
-  const [replyingTo, setReplyingTo] = useState<any>(null);
-  const [messages, setMessages] = useState([
+  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       text: "Don't forget the Zoom link for our UI/UX webinar later.",
@@ -43,13 +52,13 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      const newMsg = {
+      const newMsg: Message = {
         id: Date.now().toString(),
         text: newMessage,
         sender: 'You',
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         isOwn: true,
-        replyTo: replyingTo
+        replyTo: replyingTo || undefined
       };
       
       setMessages([...messages, newMsg]);
@@ -66,7 +75,7 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
     }
   };
 
-  const handleReply = (message: any) => {
+  const handleReply = (message: Message) => {
     setReplyingTo(message);
   };
 
