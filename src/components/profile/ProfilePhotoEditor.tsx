@@ -48,7 +48,7 @@ const ProfilePhotoEditor = ({ onPhotoChange, currentPhoto, isDarkMode }: Profile
         onClick={triggerFileSelect}
         className={`absolute -bottom-2 -right-2 rounded-full p-2 h-8 w-8 ${
           isDarkMode 
-            ? 'bg-gray-800 border-gray-600 hover:bg-gray-700' 
+            ? 'bg-black border-gray-700 hover:bg-gray-900 text-gray-300' 
             : 'bg-white border-gray-300 hover:bg-gray-50'
         }`}
       >

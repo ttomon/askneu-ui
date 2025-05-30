@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTheme } from '@/contexts/ThemeContext';
 import SettingsScreen from './SettingsScreen';
 import GroupDetailScreen from '../groups/GroupDetailScreen';
+import ProfilePhotoEditor from './ProfilePhotoEditor';
 
 interface ProfileScreenProps {
   onLogout?: () => void;
@@ -15,7 +16,8 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const [showSettings, setShowSettings] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [userStats] = useState({
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [userStats, setUserStats] = useState({
     name: 'Juan Dela Cruz',
     email: 'juan.dela.cruz@neu.edu.ph',
     course: 'BS Computer Science',
@@ -78,8 +80,12 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
   };
 
   const handlePhotoChange = (photoUrl: string) => {
-    // Here you would typically update the user's profile photo
+    setUserStats(prev => ({ ...prev, profilePhoto: photoUrl }));
     console.log('Profile photo updated:', photoUrl);
+  };
+
+  const handleEditProfile = () => {
+    setIsEditingProfile(!isEditingProfile);
   };
 
   if (showSettings) {
@@ -101,9 +107,9 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
   }
 
   return (
-    <div className={`min-h-screen pb-20 transition-colors max-w-md mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen pb-20 transition-colors max-w-md mx-auto ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className={`shadow-sm px-4 py-3 transition-colors ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+      <div className={`shadow-sm px-4 py-3 transition-colors ${isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'}`}>
         <div className="flex items-center justify-between">
           <h1 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Profile</h1>
           <div className="flex space-x-2">
@@ -111,7 +117,7 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
               onClick={toggleDarkMode}
               className={`p-2 rounded-lg transition-colors ${
                 isDarkMode 
-                  ? 'text-gray-300 hover:text-yellow-400 hover:bg-gray-700' 
+                  ? 'text-gray-300 hover:text-yellow-400 hover:bg-gray-900' 
                   : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
               }`}
             >
@@ -121,7 +127,7 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
               onClick={handleSettingsClick}
               className={`p-2 rounded-lg transition-colors ${
                 isDarkMode 
-                  ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-700' 
+                  ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-900' 
                   : 'text-gray-600 hover:text-blue-600 hover:bg-gray-100'
               }`}
             >
@@ -131,7 +137,7 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
               onClick={handleLogout}
               className={`p-2 rounded-lg transition-colors ${
                 isDarkMode 
-                  ? 'text-gray-300 hover:text-red-400 hover:bg-gray-700' 
+                  ? 'text-gray-300 hover:text-red-400 hover:bg-gray-900' 
                   : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'
               }`}
             >
@@ -143,18 +149,40 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
 
       {/* Profile Info */}
       <div className={`mx-4 mt-4 rounded-lg shadow-sm border p-6 transition-colors ${
-        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'
       }`}>
         <div className="flex items-center space-x-4 mb-4">
-          <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
-            {userStats.profilePhoto ? (
-              <img src={userStats.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <User size={32} className="text-white" />
-            )}
-          </div>
+          {isEditingProfile ? (
+            <ProfilePhotoEditor
+              onPhotoChange={handlePhotoChange}
+              currentPhoto={userStats.profilePhoto}
+              isDarkMode={isDarkMode}
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
+              {userStats.profilePhoto ? (
+                <img src={userStats.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <User size={32} className="text-white" />
+              )}
+            </div>
+          )}
           <div className="flex-1">
-            <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{userStats.name}</h2>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{userStats.name}</h2>
+              <Button
+                onClick={handleEditProfile}
+                variant="outline"
+                size="sm"
+                className={`${
+                  isDarkMode 
+                    ? 'border-gray-700 text-gray-300 hover:bg-gray-900 hover:text-white' 
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {isEditingProfile ? 'Done' : 'Edit Profile'}
+              </Button>
+            </div>
             <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{userStats.email}</p>
             <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{userStats.course} • {userStats.year}</p>
           </div>
@@ -162,19 +190,19 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-4 mt-6">
-          <div className={`text-center p-3 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+          <div className={`text-center p-3 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{userStats.postsCount}</div>
             <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Questions</div>
           </div>
-          <div className={`text-center p-3 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+          <div className={`text-center p-3 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{userStats.answersCount}</div>
             <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Answers</div>
           </div>
-          <div className={`text-center p-3 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+          <div className={`text-center p-3 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{userStats.groupsCount}</div>
             <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Groups</div>
           </div>
-          <div className={`text-center p-3 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+          <div className={`text-center p-3 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
             <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{userStats.reputation}</div>
             <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Reputation</div>
           </div>
@@ -184,7 +212,7 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
       {/* Content Tabs */}
       <div className="mx-4 mt-4">
         <Tabs defaultValue="posts" className="w-full">
-          <TabsList className={`grid w-full grid-cols-3 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <TabsList className={`grid w-full grid-cols-3 ${isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'}`}>
             <TabsTrigger value="posts" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
               My Posts
             </TabsTrigger>

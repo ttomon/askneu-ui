@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Search, MessageCircle, User } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -69,10 +70,10 @@ const MessagesScreen = () => {
   }
 
   return (
-    <div className={`min-h-screen pb-20 transition-colors max-w-md mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen pb-20 transition-colors max-w-md mx-auto ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
       {/* Header */}
       <div className={`shadow-sm px-4 py-4 border-b transition-colors ${
-        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+        isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-100'
       }`}>
         <h1 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Messages</h1>
         <div className="relative">
@@ -83,7 +84,7 @@ const MessagesScreen = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className={`pl-10 transition-colors ${
               isDarkMode 
-                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' 
+                ? 'border-gray-700 bg-gray-900 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' 
                 : 'border-gray-300 bg-gray-50 hover:bg-white focus:border-blue-600 focus:ring-blue-600'
             }`}
           />
@@ -92,14 +93,14 @@ const MessagesScreen = () => {
 
       {/* Conversations List */}
       <ScrollArea className="h-[calc(100vh-200px)]">
-        <div className={`divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-100'}`}>
+        <div className={`divide-y ${isDarkMode ? 'divide-gray-800' : 'divide-gray-100'}`}>
           {filteredConversations.map((conversation) => (
             <div
               key={conversation.id}
               onClick={() => setSelectedChat(conversation.id)}
               className={`p-4 cursor-pointer transition-colors ${
                 isDarkMode 
-                  ? 'hover:bg-gray-700 active:bg-gray-600' 
+                  ? 'hover:bg-gray-900 active:bg-gray-800' 
                   : 'hover:bg-gray-50 active:bg-gray-100'
               }`}
             >
