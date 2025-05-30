@@ -99,7 +99,15 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
   };
 
   const handleComment = (postId: string) => {
-    console.log('Opening comments for post:', postId);
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      toast({
+        title: "Opening Comments",
+        description: `Viewing comments for "${post.title}".`,
+      });
+      // Here you would navigate to a comment detail view
+      console.log('Opening comments for post:', postId);
+    }
   };
 
   const handleShare = (postId: string) => {
@@ -113,10 +121,10 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
   };
 
   return (
-    <div className={`min-h-screen pb-20 transition-colors ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} max-w-md mx-auto`}>
+    <div className={`min-h-screen pb-20 transition-colors ${isDarkMode ? 'bg-black' : 'bg-gray-50'} max-w-md mx-auto`}>
       {/* Header */}
       <div className={`shadow-sm px-4 py-4 border-b transition-colors ${
-        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+        isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-100'
       }`}>
         <div className="flex items-center justify-between mb-4">
           <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Feed</h1>
@@ -124,7 +132,7 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
             onClick={onOpenProfile}
             className={`p-2 rounded-lg transition-all duration-200 ${
               isDarkMode 
-                ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-700' 
+                ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-900' 
                 : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
             }`}
           >
@@ -140,22 +148,18 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
             onChange={(e) => setSearchQuery(e.target.value)}
             className={`pl-10 transition-colors ${
               isDarkMode 
-                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' 
+                ? 'border-gray-800 bg-black text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' 
                 : 'border-gray-300 bg-gray-50 hover:bg-white focus:border-blue-600 focus:ring-blue-600'
             }`}
           />
         </div>
       </div>
 
-      {/* Create Post Button */}
+      {/* Create Post Button - Removed glowing effect */}
       <div className="px-4 py-3">
         <Button
           onClick={onCreatePost}
-          className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] animate-pulse"
-          style={{
-            boxShadow: '0 0 20px rgba(239, 68, 68, 0.4)',
-            animation: 'glow 2s ease-in-out infinite alternate'
-          }}
+          className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
         >
           ✨ Ask a Question
         </Button>
@@ -176,7 +180,7 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
                 sortBy === option.id
                   ? 'bg-blue-600 text-white'
                   : isDarkMode
-                    ? 'bg-gray-800 border border-gray-600 text-gray-300 hover:text-blue-400 hover:border-blue-500 hover:bg-gray-700'
+                    ? 'bg-gray-900 border border-gray-800 text-gray-300 hover:text-blue-400 hover:border-blue-500 hover:bg-gray-800'
                     : 'bg-white border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-600 hover:bg-blue-50'
               }`}
             >
@@ -207,17 +211,6 @@ const HomeFeed = ({ onCreatePost, onOpenMessages, onOpenProfile }: HomeFeedProps
           <p className={isDarkMode ? 'text-gray-500' : 'text-gray-400'}>Try adjusting your search terms</p>
         </div>
       )}
-
-      <style>{`
-        @keyframes glow {
-          from {
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
-          }
-          to {
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
-          }
-        }
-      `}</style>
     </div>
   );
 };

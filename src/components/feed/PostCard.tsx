@@ -42,9 +42,9 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
   };
 
   return (
-    <div className={`shadow-sm border-b p-4 transition-colors ${
+    <div className={`shadow-sm border-b p-4 transition-colors hover:bg-opacity-5 hover:bg-gray-500 ${
       isDarkMode 
-        ? 'bg-gray-800 border-gray-700' 
+        ? 'bg-black border-gray-800' 
         : 'bg-white border-gray-100'
     }`}>
       <div className="flex items-start justify-between mb-3">
@@ -68,7 +68,7 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
       </div>
 
       <div className={`flex items-center justify-between text-sm mb-3 ${
-        isDarkMode ? 'text-gray-400' : 'text-gray-500'
+        isDarkMode ? 'text-gray-500' : 'text-gray-500'
       }`}>
         <div className="flex items-center space-x-1">
           <User size={14} />
@@ -79,16 +79,16 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
       </div>
 
       <div className={`flex items-center justify-between pt-3 border-t ${
-        isDarkMode ? 'border-gray-700' : 'border-gray-100'
+        isDarkMode ? 'border-gray-800' : 'border-gray-100'
       }`}>
         <div className="flex items-center space-x-4">
           <button
             onClick={handleLike}
-            className={`flex items-center space-x-1 transition-colors ${
+            className={`flex items-center space-x-1 transition-colors p-2 rounded-full hover:bg-red-500 hover:bg-opacity-10 ${
               isLiked 
                 ? 'text-red-500' 
                 : isDarkMode 
-                  ? 'text-gray-400 hover:text-red-500'
+                  ? 'text-gray-500 hover:text-red-500'
                   : 'text-gray-600 hover:text-red-500'
             }`}
           >
@@ -98,9 +98,9 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
 
           <button
             onClick={() => onComment(post.id)}
-            className={`flex items-center space-x-1 transition-colors ${
+            className={`flex items-center space-x-1 transition-colors p-2 rounded-full hover:bg-blue-500 hover:bg-opacity-10 ${
               isDarkMode 
-                ? 'text-gray-400 hover:text-blue-400'
+                ? 'text-gray-500 hover:text-blue-400'
                 : 'text-gray-600 hover:text-blue-600'
             }`}
           >
@@ -110,10 +110,10 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
 
           <button
             onClick={() => onShare(post.id)}
-            className={`flex items-center space-x-1 transition-colors ${
+            className={`flex items-center space-x-1 transition-colors p-2 rounded-full hover:bg-green-500 hover:bg-opacity-10 ${
               isDarkMode 
-                ? 'text-gray-400 hover:text-blue-400'
-                : 'text-gray-600 hover:text-blue-600'
+                ? 'text-gray-500 hover:text-green-400'
+                : 'text-gray-600 hover:text-green-600'
             }`}
           >
             <Share size={16} />
@@ -123,11 +123,11 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
 
         <button
           onClick={handleSave}
-          className={`transition-colors ${
+          className={`transition-colors p-2 rounded-full hover:bg-yellow-500 hover:bg-opacity-10 ${
             isSaved 
               ? 'text-blue-500' 
               : isDarkMode 
-                ? 'text-gray-400 hover:text-blue-400'
+                ? 'text-gray-500 hover:text-blue-400'
                 : 'text-gray-600 hover:text-blue-500'
           }`}
         >
