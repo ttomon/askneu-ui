@@ -37,7 +37,7 @@ const SignUpScreen = ({ onBack, onSubmit }: SignUpScreenProps) => {
 
   return (
     <div className={`min-h-screen flex flex-col justify-center px-6 max-w-md mx-auto ${
-      isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-white to-gray-50'
+      isDarkMode ? 'bg-black' : 'bg-gradient-to-br from-white to-gray-50'
     }`}>
       <div className="max-w-sm mx-auto w-full">
         <div className="flex items-center mb-6">
@@ -45,7 +45,7 @@ const SignUpScreen = ({ onBack, onSubmit }: SignUpScreenProps) => {
             onClick={onBack}
             className={`p-2 rounded-lg transition-colors ${
               isDarkMode 
-                ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-700'
+                ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-900'
                 : 'text-gray-600 hover:text-[#7B1F27] hover:bg-gray-50'
             }`}
           >
@@ -60,7 +60,7 @@ const SignUpScreen = ({ onBack, onSubmit }: SignUpScreenProps) => {
           <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-[#333]'}`}>
             Create Account
           </h2>
-          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             Join the AskNEU community
           </p>
         </div>
@@ -78,7 +78,7 @@ const SignUpScreen = ({ onBack, onSubmit }: SignUpScreenProps) => {
                 onChange={(e) => setFirstName(e.target.value)}
                 className={`mt-1 ${
                   isDarkMode 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-[#1877F2] focus:ring-[#1877F2]'
+                    ? 'border-gray-800 bg-black text-white placeholder-gray-500 focus:border-[#1877F2] focus:ring-[#1877F2]'
                     : 'border-gray-300 focus:border-[#1877F2] focus:ring-[#1877F2]'
                 }`}
                 required
@@ -95,7 +95,7 @@ const SignUpScreen = ({ onBack, onSubmit }: SignUpScreenProps) => {
                 onChange={(e) => setLastName(e.target.value)}
                 className={`mt-1 ${
                   isDarkMode 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-[#1877F2] focus:ring-[#1877F2]'
+                    ? 'border-gray-800 bg-black text-white placeholder-gray-500 focus:border-[#1877F2] focus:ring-[#1877F2]'
                     : 'border-gray-300 focus:border-[#1877F2] focus:ring-[#1877F2]'
                 }`}
                 required
@@ -114,7 +114,7 @@ const SignUpScreen = ({ onBack, onSubmit }: SignUpScreenProps) => {
               onChange={(e) => setEmail(e.target.value)}
               className={`mt-1 ${
                 isDarkMode 
-                  ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-[#1877F2] focus:ring-[#1877F2]'
+                  ? 'border-gray-800 bg-black text-white placeholder-gray-500 focus:border-[#1877F2] focus:ring-[#1877F2]'
                   : 'border-gray-300 focus:border-[#1877F2] focus:ring-[#1877F2]'
               }`}
               required
@@ -132,7 +132,7 @@ const SignUpScreen = ({ onBack, onSubmit }: SignUpScreenProps) => {
               onChange={(e) => setPassword(e.target.value)}
               className={`mt-1 ${
                 isDarkMode 
-                  ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-[#1877F2] focus:ring-[#1877F2]'
+                  ? 'border-gray-800 bg-black text-white placeholder-gray-500 focus:border-[#1877F2] focus:ring-[#1877F2]'
                   : 'border-gray-300 focus:border-[#1877F2] focus:ring-[#1877F2]'
               }`}
               required
@@ -150,7 +150,7 @@ const SignUpScreen = ({ onBack, onSubmit }: SignUpScreenProps) => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               className={`mt-1 ${
                 isDarkMode 
-                  ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-[#1877F2] focus:ring-[#1877F2]'
+                  ? 'border-gray-800 bg-black text-white placeholder-gray-500 focus:border-[#1877F2] focus:ring-[#1877F2]'
                   : 'border-gray-300 focus:border-[#1877F2] focus:ring-[#1877F2]'
               }`}
               required
@@ -165,7 +165,7 @@ const SignUpScreen = ({ onBack, onSubmit }: SignUpScreenProps) => {
           </Button>
 
           <div className="text-center">
-            <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               Already have an account?{' '}
               <button
                 onClick={onBack}

@@ -10,9 +10,11 @@ import GroupsScreen from '@/components/groups/GroupsScreen';
 import NotificationsScreen from '@/components/notifications/NotificationsScreen';
 import ProfileScreen from '@/components/profile/ProfileScreen';
 import BottomNavigation from '@/components/layout/BottomNavigation';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
+  const { isDarkMode } = useTheme();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
   const [authScreen, setAuthScreen] = useState<'login' | 'signup' | 'forgot'>('login');
@@ -146,7 +148,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
       {renderActiveScreen()}
       <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       <AskQuestionModal

@@ -43,15 +43,15 @@ const GroupDetailScreen = ({ groupId, onBack }: GroupDetailScreenProps) => {
   ]);
 
   return (
-    <div className={`min-h-screen pb-20 max-w-md mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen pb-20 max-w-md mx-auto ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className={`shadow-sm px-4 py-3 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+      <div className={`shadow-sm px-4 py-3 ${isDarkMode ? 'bg-black border-b border-gray-800' : 'bg-white'}`}>
         <div className="flex items-center space-x-3">
           <button
             onClick={onBack}
             className={`p-2 rounded-lg transition-colors ${
               isDarkMode 
-                ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-700' 
+                ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-900' 
                 : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
             }`}
           >
@@ -63,18 +63,18 @@ const GroupDetailScreen = ({ groupId, onBack }: GroupDetailScreenProps) => {
 
       {/* Group Info */}
       <div className={`mx-4 mt-4 rounded-lg shadow-sm border p-6 ${
-        isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'
       }`}>
         <div className="flex items-start space-x-4 mb-4">
           <div className={`w-16 h-16 rounded-lg flex items-center justify-center ${
-            isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+            isDarkMode ? 'bg-gray-900' : 'bg-gray-100'
           }`}>
             <span className="text-3xl">{group.icon}</span>
           </div>
           <div className="flex-1">
             <h2 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{group.name}</h2>
-            <p className={`text-sm mb-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{group.description}</p>
-            <div className={`flex items-center space-x-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            <p className={`text-sm mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{group.description}</p>
+            <div className={`flex items-center space-x-4 text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
               <div className="flex items-center">
                 <Users size={14} />
                 <span className="ml-1">{group.members} members</span>
@@ -108,7 +108,7 @@ const GroupDetailScreen = ({ groupId, onBack }: GroupDetailScreenProps) => {
         </div>
 
         {/* Admins */}
-        <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+        <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
           <span className="font-medium">Admins:</span> {group.admins.join(', ')}
         </div>
       </div>
@@ -119,10 +119,10 @@ const GroupDetailScreen = ({ groupId, onBack }: GroupDetailScreenProps) => {
         <div className="space-y-3">
           {recentPosts.map((post) => (
             <div key={post.id} className={`rounded-lg shadow-sm border p-4 ${
-              isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+              isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'
             }`}>
               <h4 className={`font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{post.title}</h4>
-              <div className={`flex items-center justify-between text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              <div className={`flex items-center justify-between text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                 <span>by {post.author} • {post.time}</span>
                 <span>{post.likes} likes • {post.replies} replies</span>
               </div>
