@@ -1,8 +1,9 @@
-
 import React, { useState } from 'react';
-import { ArrowLeft, Heart, MessageCircle, Users, User, Trash2 } from 'lucide-react';
+import { ArrowLeft, Heart, MessageCircle, Users, User, Trash2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface NotificationDetailScreenProps {
   notificationId: string;
@@ -11,6 +12,9 @@ interface NotificationDetailScreenProps {
 
 const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetailScreenProps) => {
   const { isDarkMode } = useTheme();
+  const { toast } = useToast();
+  const [replyText, setReplyText] = useState('');
+  const [showReplyBox, setShowReplyBox] = useState(false);
   const [notification] = useState({
     id: notificationId,
     type: 'like',
@@ -21,11 +25,25 @@ const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetail
     fullContent: 'Ana Reyes and 3 others liked your question about APA citation. Your question has received positive feedback from the Research101 community.',
     relatedPost: {
       title: 'How do I cite an online journal in APA 7th edition?',
-      content: "I'm finalizing my thesis and need clarification on how to cite online sources properly. The journal doesn't have a DOI, so I'm not sure about the format...",
+      content: "I'm finalizing my thesis and need clarification on how to cite online sources properly. The journal doesn't have a DOI, so I'm not sure about the format. Should I include the URL? What about the access date? Any help would be appreciated!",
       group: 'Research101',
       author: 'You',
       likes: 24,
-      comments: 5
+      comments: 5,
+      replies: [
+        {
+          id: '1',
+          author: 'Ana Reyes',
+          content: 'For APA 7th edition, if there\'s no DOI, you should include the URL. The format is: Author, A. A. (Year). Title of article. Title of Journal, Volume(Issue), pages. URL',
+          time: '3m ago'
+        },
+        {
+          id: '2',
+          author: 'Mark Santos',
+          content: 'Also, you don\'t need to include the access date unless the content is likely to change over time.',
+          time: '2m ago'
+        }
+      ]
     }
   });
 
@@ -56,6 +74,18 @@ const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetail
         return 'text-purple-500';
       default:
         return isDarkMode ? 'text-gray-400' : 'text-gray-500';
+    }
+  };
+
+  const handleReply = () => {
+    if (replyText.trim()) {
+      console.log('Sending reply:', replyText);
+      toast({
+        title: "Reply sent",
+        description: "Your reply has been posted successfully.",
+      });
+      setReplyText('');
+      setShowReplyBox(false);
     }
   };
 
@@ -140,20 +170,93 @@ const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetail
           </div>
         )}
 
+        {/* Existing Replies */}
+        {notification.relatedPost?.replies && (
+          <div className={`rounded-lg border p-4 ${
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+          }`}>
+            <h4 className={`font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Replies ({notification.relatedPost.replies.length})
+            </h4>
+            <div className="space-y-3">
+              {notification.relatedPost.replies.map((reply) => (
+                <div key={reply.id} className={`border-l-2 pl-3 ${
+                  isDarkMode ? 'border-gray-600' : 'border-gray-200'
+                }`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className={`font-medium text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                      {reply.author}
+                    </span>
+                    <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {reply.time}
+                    </span>
+                  </div>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    {reply.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Reply Box */}
+        {showReplyBox && (
+          <div className={`rounded-lg border p-4 ${
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+          }`}>
+            <h4 className={`font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Add a Reply
+            </h4>
+            <div className="flex space-x-2">
+              <Input
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Type your reply..."
+                className={`flex-1 ${
+                  isDarkMode 
+                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500'
+                    : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+                }`}
+                onKeyPress={(e) => e.key === 'Enter' && handleReply()}
+              />
+              <Button
+                onClick={handleReply}
+                className={`${
+                  isDarkMode 
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+                size="sm"
+              >
+                <Send size={16} />
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="flex space-x-2">
           <Button 
             variant="outline" 
-            className="flex-1"
+            className={`flex-1 ${
+              isDarkMode 
+                ? 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white' 
+                : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}
             onClick={() => console.log('View post')}
           >
             View Post
           </Button>
           <Button 
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-            onClick={() => console.log('Reply')}
+            className={`flex-1 ${
+              isDarkMode 
+                ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
+            onClick={() => setShowReplyBox(!showReplyBox)}
           >
-            Reply
+            {showReplyBox ? 'Cancel' : 'Reply'}
           </Button>
         </div>
       </div>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, Camera, Bell, Users, MessageSquare, Moon, Sun, LogOut, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,14 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
     toast({
       title: "Logged out successfully",
       description: "You have been logged out of your account.",
+    });
+  };
+
+  const handlePhotoChange = (photoUrl: string) => {
+    console.log('Photo changed:', photoUrl);
+    toast({
+      title: "Profile photo updated",
+      description: "Your profile photo has been updated successfully.",
     });
   };
 
@@ -93,9 +102,9 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
             onClick={() => setIsEditMode(!isEditMode)}
             variant="outline"
             size="sm"
-            className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white' : ''}
+            className={`${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
           >
-            {isEditMode ? 'Done' : 'Edit'}
+            {isEditMode ? 'Done' : 'Edit Profile'}
           </Button>
         </div>
       </div>
@@ -107,7 +116,7 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
             <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Profile Photo
             </h3>
-            <ProfilePhotoEditor />
+            <ProfilePhotoEditor onPhotoChange={handlePhotoChange} isDarkMode={isDarkMode} />
           </div>
         )}
 
@@ -115,7 +124,7 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
         <div className={`rounded-lg p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              {isDarkMode ? <Moon size={20} className="text-gray-300" /> : <Sun size={20} className="text-gray-600" />}
+              {isDarkMode ? <Moon size={20} className="text-blue-400" /> : <Sun size={20} className="text-yellow-500" />}
               <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 Dark Mode
               </span>
@@ -123,6 +132,7 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
             <Switch
               checked={isDarkMode}
               onCheckedChange={toggleDarkMode}
+              className={`${isDarkMode ? 'data-[state=checked]:bg-blue-600' : 'data-[state=checked]:bg-blue-600'}`}
             />
           </div>
         </div>
@@ -136,26 +146,29 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Email Updates</span>
+              <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Email Updates</span>
               <Switch
                 checked={settings.emailUpdates}
                 onCheckedChange={(checked) => updateSetting('emailUpdates', checked)}
+                className={`${isDarkMode ? 'data-[state=checked]:bg-blue-600' : 'data-[state=checked]:bg-blue-600'}`}
               />
             </div>
             
             <div className="flex items-center justify-between">
-              <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Group Invites</span>
+              <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Group Invites</span>
               <Switch
                 checked={settings.groupInvites}
                 onCheckedChange={(checked) => updateSetting('groupInvites', checked)}
+                className={`${isDarkMode ? 'data-[state=checked]:bg-blue-600' : 'data-[state=checked]:bg-blue-600'}`}
               />
             </div>
             
             <div className="flex items-center justify-between">
-              <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Post Replies</span>
+              <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Post Replies</span>
               <Switch
                 checked={settings.postReplies}
                 onCheckedChange={(checked) => updateSetting('postReplies', checked)}
+                className={`${isDarkMode ? 'data-[state=checked]:bg-blue-600' : 'data-[state=checked]:bg-blue-600'}`}
               />
             </div>
           </div>
@@ -168,7 +181,7 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
           <Button
             onClick={() => setShowLogoutConfirm(true)}
             variant="destructive"
-            className="w-full"
+            className="w-full bg-red-600 hover:bg-red-700 text-white"
           >
             <LogOut size={16} className="mr-2" />
             Logout

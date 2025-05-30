@@ -106,6 +106,20 @@
     background: transparent;
   }
 
+  /*
+   * Custom App-Specific Styles 
+   */
+
+  /* Button styles */
+  .app-button {
+    @apply rounded-md font-medium transition-all;
+  }
+
+  /* Enhanced card styles */
+  .app-card {
+    @apply rounded-lg border shadow-sm overflow-hidden;
+  }
+
   /* Ensure all containers respect mobile layout */
   .container {
     max-width: 480px !important;
@@ -150,21 +164,19 @@
   p, span, div {
     line-height: 1.6;
   }
+  
+  /* Custom styles for input fields */
+  input, textarea {
+    @apply transition-colors duration-200;
+  }
+  
+  .dark input, .dark textarea {
+    @apply bg-gray-800 border-gray-700 text-white placeholder-gray-400;
+  }
 }
 
-/* Glowing animation for Ask Question button */
-@keyframes glow {
-  from {
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
-  }
-  to {
-    box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
-  }
-}
-
-.glow-button {
-  animation: glow 2s ease-in-out infinite alternate;
-}
+/* Remove the glowing animation for Ask Question button */
+/* Previously there was a glow animation here that has been removed */
 
 /* Prevent any desktop layouts */
 @media (min-width: 768px) {
@@ -187,4 +199,14 @@
   body {
     max-width: 480px !important;
   }
+}
+
+/* Input field custom styles */
+.dark .input-field {
+  @apply bg-gray-800 border-gray-600 text-white;
+}
+
+/* Custom button styles */
+.dark .custom-button {
+  @apply bg-gray-700 hover:bg-gray-600;
 }

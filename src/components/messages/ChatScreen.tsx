@@ -4,6 +4,7 @@ import { ArrowLeft, Send, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface ChatScreenProps {
   conversationId: string;
@@ -13,8 +14,9 @@ interface ChatScreenProps {
 
 const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProps) => {
   const { isDarkMode } = useTheme();
+  const { toast } = useToast();
   const [newMessage, setNewMessage] = useState('');
-  const [messages] = useState([
+  const [messages, setMessages] = useState([
     {
       id: '1',
       text: "Don't forget the Zoom link for our UI/UX webinar later.",
@@ -40,15 +42,32 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      console.log('Sending message:', newMessage);
+      const newMsg = {
+        id: Date.now().toString(),
+        text: newMessage,
+        sender: 'You',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isOwn: true
+      };
+      
+      setMessages([...messages, newMsg]);
       setNewMessage('');
+      
+      // Simulate local storage persistence
+      console.log('Message saved to local storage', newMsg);
+      
+      toast({
+        title: "Message Sent",
+        description: "Your message has been delivered.",
+        duration: 2000
+      });
     }
   };
 
   return (
     <div className={`min-h-screen flex flex-col max-w-md mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className={`shadow-sm px-4 py-3 flex-shrink-0 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+      <div className={`shadow-sm px-4 py-3 flex-shrink-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
         <div className="flex items-center space-x-3">
           <button
             onClick={onBack}
@@ -117,7 +136,7 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
           />
           <Button
             onClick={handleSendMessage}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className={`${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
             size="sm"
           >
             <Send size={16} />
