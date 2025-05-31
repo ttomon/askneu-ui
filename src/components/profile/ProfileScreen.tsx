@@ -4,6 +4,9 @@ import { Settings, ChevronRight, Award, Users, MessageSquare, Heart } from 'luci
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
 import SettingsScreen from './SettingsScreen';
+import QuestionsView from './QuestionsView';
+import AnswersView from './AnswersView';
+import FollowersView from './FollowersView';
 
 interface ProfileScreenProps {
   onLogout: () => void;
@@ -12,28 +15,43 @@ interface ProfileScreenProps {
 const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
   const { isDarkMode } = useTheme();
   const [showSettings, setShowSettings] = useState(false);
+  const [activeView, setActiveView] = useState<'profile' | 'questions' | 'answers' | 'followers' | 'settings'>('profile');
 
   const stats = [
-    { label: 'Questions', value: '24', icon: MessageSquare },
-    { label: 'Answers', value: '56', icon: Award },
-    { label: 'Followers', value: '128', icon: Users },
-    { label: 'Likes', value: '342', icon: Heart },
+    { label: 'Questions', value: '24', icon: MessageSquare, view: 'questions' as const },
+    { label: 'Answers', value: '56', icon: Award, view: 'answers' as const },
+    { label: 'Followers', value: '128', icon: Users, view: 'followers' as const },
+    { label: 'Likes', value: '342', icon: Heart, view: null },
   ];
 
   const menuItems = [
-    { label: 'Academic History', icon: Award },
-    { label: 'Saved Posts', icon: Heart },
-    { label: 'Study Groups', icon: Users },
-    { label: 'Achievements', icon: Award },
+    { label: 'Academic History', icon: Award, description: 'View your academic achievements and courses' },
+    { label: 'Study Groups', icon: Users, description: 'Manage your study groups and collaborations' },
+    { label: 'Achievements', icon: Award, description: 'See your badges and accomplishments' },
   ];
 
-  if (showSettings) {
+  if (showSettings || activeView === 'settings') {
     return (
       <SettingsScreen
-        onBack={() => setShowSettings(false)}
+        onBack={() => {
+          setShowSettings(false);
+          setActiveView('profile');
+        }}
         onLogout={onLogout}
       />
     );
+  }
+
+  if (activeView === 'questions') {
+    return <QuestionsView onBack={() => setActiveView('profile')} />;
+  }
+
+  if (activeView === 'answers') {
+    return <AnswersView onBack={() => setActiveView('profile')} />;
+  }
+
+  if (activeView === 'followers') {
+    return <FollowersView onBack={() => setActiveView('profile')} />;
   }
 
   return (
@@ -96,7 +114,13 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
             {stats.map((stat, index) => {
               const IconComponent = stat.icon;
               return (
-                <div key={index} className="p-4 text-center">
+                <div 
+                  key={index} 
+                  className={`p-4 text-center transition-colors ${
+                    stat.view ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900' : ''
+                  }`}
+                  onClick={() => stat.view && setActiveView(stat.view)}
+                >
                   <IconComponent className={`w-5 h-5 mx-auto mb-2 ${
                     isDarkMode ? 'text-gray-400' : 'text-gray-600'
                   }`} />
@@ -139,11 +163,18 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
                   <IconComponent className={`w-5 h-5 ${
                     isDarkMode ? 'text-gray-400' : 'text-gray-600'
                   }`} />
-                  <span className={`font-medium ${
-                    isDarkMode ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    {item.label}
-                  </span>
+                  <div>
+                    <span className={`font-medium block ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {item.label}
+                    </span>
+                    <span className={`text-sm ${
+                      isDarkMode ? 'text-gray-500' : 'text-gray-500'
+                    }`}>
+                      {item.description}
+                    </span>
+                  </div>
                 </div>
                 <ChevronRight className={`w-4 h-4 ${
                   isDarkMode ? 'text-gray-500' : 'text-gray-400'
