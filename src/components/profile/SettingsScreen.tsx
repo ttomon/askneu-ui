@@ -1,8 +1,10 @@
-
-import React from 'react';
-import { ArrowLeft, User, Bell, Shield, Palette, HelpCircle, LogOut } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, User, Bell, Shield, Palette, HelpCircle, LogOut, Edit } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
+import ProfilePhotoEditor from './ProfilePhotoEditor';
 
 interface SettingsScreenProps {
   onBack: () => void;
@@ -11,6 +13,22 @@ interface SettingsScreenProps {
 
 const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showProfileEditor, setShowProfileEditor] = useState(false);
+
+  const handleLogoutConfirm = () => {
+    setShowLogoutConfirm(false);
+    onLogout();
+  };
+
+  if (showProfileEditor) {
+    return (
+      <ProfilePhotoEditor
+        onBack={() => setShowProfileEditor(false)}
+        onSave={() => setShowProfileEditor(false)}
+      />
+    );
+  }
 
   return (
     <div className={`min-h-screen pb-20 max-w-md mx-auto ${
@@ -54,6 +72,27 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
               isDarkMode ? 'border-gray-800' : 'border-gray-100'
             }`}>
               <div className="flex items-center space-x-3">
+                <Edit className={`w-5 h-5 ${
+                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                }`} />
+                <span className={`font-medium ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Edit Profile
+                </span>
+              </div>
+              <button 
+                onClick={() => setShowProfileEditor(true)}
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+              >
+                Edit
+              </button>
+            </div>
+            
+            <div className={`flex items-center justify-between p-4 border-b ${
+              isDarkMode ? 'border-gray-800' : 'border-gray-100'
+            }`}>
+              <div className="flex items-center space-x-3">
                 <User className={`w-5 h-5 ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-600'
                 }`} />
@@ -64,7 +103,7 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
                 </span>
               </div>
               <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                Edit Profile
+                Manage
               </button>
             </div>
             
@@ -214,21 +253,52 @@ const SettingsScreen = ({ onBack, onLogout }: SettingsScreenProps) => {
           </div>
         </div>
 
-        {/* Logout */}
+        {/* Logout with Confirmation */}
         <div className={`rounded-lg shadow-sm border ${
           isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'
         }`}>
-          <button
-            onClick={onLogout}
-            className={`flex items-center justify-center w-full p-4 space-x-3 ${
-              isDarkMode 
-                ? 'text-red-400 hover:bg-gray-900' 
-                : 'text-red-600 hover:bg-red-50'
-            } transition-colors rounded-lg`}
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Sign Out</span>
-          </button>
+          <Dialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+            <DialogTrigger asChild>
+              <button
+                className={`flex items-center justify-center w-full p-4 space-x-3 ${
+                  isDarkMode 
+                    ? 'text-red-400 hover:bg-gray-900' 
+                    : 'text-red-600 hover:bg-red-50'
+                } transition-colors rounded-lg`}
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="font-medium">Sign Out</span>
+              </button>
+            </DialogTrigger>
+            <DialogContent className={`${
+              isDarkMode ? 'bg-black border-gray-800' : 'bg-white'
+            }`}>
+              <DialogHeader>
+                <DialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>
+                  Confirm Sign Out
+                </DialogTitle>
+                <DialogDescription className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                  Are you sure you want to sign out? You'll need to sign in again to access your account.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex space-x-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className={isDarkMode ? 'border-gray-700 text-gray-300 hover:bg-gray-900' : ''}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={handleLogoutConfirm}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Sign Out
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>

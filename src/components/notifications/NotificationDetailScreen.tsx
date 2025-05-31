@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, Heart, MessageCircle, Users, User, Trash2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -141,7 +140,7 @@ const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetail
             <p className={`text-base mb-4 leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               {notification.relatedPost.content}
             </p>
-            <div className={`flex items-center justify-between text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            <div className={`flex items-center justify-between text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
               <span>by {notification.relatedPost.author}</span>
               <span>{notification.relatedPost.likes} likes • {notification.relatedPost.comments} comments</span>
             </div>
@@ -157,7 +156,7 @@ const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetail
             <div className="space-y-4">
               {notification.relatedPost.replies.map((reply) => (
                 <div key={reply.id} className={`border-l-2 pl-4 ${
-                  isDarkMode ? 'border-gray-700' : 'border-gray-200'
+                  isDarkMode ? 'border-gray-800' : 'border-gray-200'
                 }`}>
                   <div className="flex items-center justify-between mb-2">
                     <span className={`font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>

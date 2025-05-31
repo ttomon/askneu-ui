@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { ArrowLeft, Send, User, Reply, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Send, User, Reply, X, MoreVertical, Phone, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -26,6 +26,8 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
   const { toast } = useToast();
   const [newMessage, setNewMessage] = useState('');
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const [otherUserTyping, setOtherUserTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -49,6 +51,36 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
       isOwn: false
     }
   ]);
+
+  // Simulate typing indicator
+  useEffect(() => {
+    let typingTimeout: NodeJS.Timeout;
+    
+    if (newMessage.length > 0) {
+      setIsTyping(true);
+      typingTimeout = setTimeout(() => {
+        setIsTyping(false);
+      }, 1000);
+    } else {
+      setIsTyping(false);
+    }
+
+    return () => {
+      if (typingTimeout) clearTimeout(typingTimeout);
+    };
+  }, [newMessage]);
+
+  // Simulate other user typing
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Math.random() > 0.8) {
+        setOtherUserTyping(true);
+        setTimeout(() => setOtherUserTyping(false), 2000);
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -85,25 +117,52 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
 
   return (
     <div className={`min-h-screen flex flex-col max-w-md mx-auto ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
-      {/* Header */}
+      {/* Enhanced Header */}
       <div className={`shadow-sm px-4 py-3 flex-shrink-0 ${isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-100'}`}>
-        <div className="flex items-center space-x-3">
-          <button
-            onClick={onBack}
-            className={`p-2 rounded-lg transition-colors ${
-              isDarkMode 
-                ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-900' 
-                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-            }`}
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
-            <User size={18} className="text-white" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={onBack}
+              className={`p-2 rounded-lg transition-colors ${
+                isDarkMode 
+                  ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-900' 
+                  : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+              }`}
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
+              <User size={18} className="text-white" />
+            </div>
+            <div>
+              <h1 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{conversationName}</h1>
+              <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                {otherUserTyping ? 'typing...' : 'Online'}
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{conversationName}</h1>
-            <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Online</p>
+          <div className="flex items-center space-x-2">
+            <button className={`p-2 rounded-lg transition-colors ${
+              isDarkMode 
+                ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-900' 
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+            }`}>
+              <Phone size={18} />
+            </button>
+            <button className={`p-2 rounded-lg transition-colors ${
+              isDarkMode 
+                ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-900' 
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+            }`}>
+              <Video size={18} />
+            </button>
+            <button className={`p-2 rounded-lg transition-colors ${
+              isDarkMode 
+                ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-900' 
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+            }`}>
+              <MoreVertical size={18} />
+            </button>
           </div>
         </div>
       </div>
@@ -118,7 +177,7 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
             <div className="relative group max-w-xs">
               {message.replyTo && (
                 <div className={`mb-1 p-2 rounded-lg text-xs ${
-                  isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'
+                  isDarkMode ? 'bg-gray-800 text-gray-400 border border-gray-700' : 'bg-gray-100 text-gray-600'
                 }`}>
                   Replying to: {message.replyTo.text.substring(0, 30)}...
                 </div>
@@ -128,7 +187,7 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
                   message.isOwn
                     ? 'bg-blue-600 text-white'
                     : isDarkMode 
-                      ? 'bg-gray-800 border border-gray-700 text-gray-200'
+                      ? 'bg-gray-900 border border-gray-800 text-gray-200'
                       : 'bg-white border border-gray-200 text-gray-800'
                 }`}
               >
@@ -136,7 +195,7 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
                 <p className={`text-xs mt-1 ${
                   message.isOwn 
                     ? 'text-blue-100' 
-                    : isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    : isDarkMode ? 'text-gray-500' : 'text-gray-500'
                 }`}>
                   {message.time}
                 </p>
@@ -145,7 +204,7 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
                 <button
                   onClick={() => handleReply(message)}
                   className={`absolute -right-8 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full ${
-                    isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                    isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                   }`}
                 >
                   <Reply size={14} />
@@ -154,12 +213,29 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
             </div>
           </div>
         ))}
+        
+        {/* Typing Indicator */}
+        {otherUserTyping && (
+          <div className="flex justify-start">
+            <div className={`px-4 py-2 rounded-lg max-w-xs ${
+              isDarkMode 
+                ? 'bg-gray-900 border border-gray-800 text-gray-400'
+                : 'bg-white border border-gray-200 text-gray-600'
+            }`}>
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Reply Banner */}
       {replyingTo && (
         <div className={`border-t px-4 py-2 ${
-          isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-100 border-gray-200'
+          isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-gray-100 border-gray-200'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -172,16 +248,21 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
               <X size={16} />
             </button>
           </div>
-          <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
             {replyingTo.text.substring(0, 50)}...
           </p>
         </div>
       )}
 
-      {/* Message Input */}
+      {/* Enhanced Message Input */}
       <div className={`border-t p-4 flex-shrink-0 ${
         isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'
       }`}>
+        {isTyping && (
+          <div className={`text-xs mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+            You are typing...
+          </div>
+        )}
         <div className="flex space-x-2">
           <Input
             value={newMessage}
@@ -189,7 +270,7 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
             placeholder="Type a message..."
             className={`flex-1 ${
               isDarkMode 
-                ? 'border-gray-700 bg-gray-900 text-white placeholder-gray-400 focus:border-blue-500'
+                ? 'border-gray-800 bg-black text-white placeholder-gray-400 focus:border-blue-500'
                 : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
             }`}
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
