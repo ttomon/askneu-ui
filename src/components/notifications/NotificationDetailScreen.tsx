@@ -8,9 +8,10 @@ import { useToast } from '@/hooks/use-toast';
 interface NotificationDetailScreenProps {
   notificationId: string;
   onBack: () => void;
+  onDelete?: (notificationId: string) => void;
 }
 
-const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetailScreenProps) => {
+const NotificationDetailScreen = ({ notificationId, onBack, onDelete }: NotificationDetailScreenProps) => {
   const { isDarkMode } = useTheme();
   const { toast } = useToast();
   const [replyText, setReplyText] = useState('');
@@ -90,12 +91,15 @@ const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetail
     }
   };
 
-  const handleViewPost = () => {
-    setShowFullPost(true);
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(notificationId);
+    }
     toast({
-      title: "Viewing Post",
-      description: "Opening full post view with all comments and details.",
+      title: "Notification deleted",
+      description: "The notification has been removed.",
     });
+    onBack();
   };
 
   const IconComponent = getIcon(notification.type);
@@ -225,11 +229,13 @@ const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetail
             </button>
             <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Notification</h1>
           </div>
-          <button className={`p-2 rounded-lg transition-colors ${
-            isDarkMode 
-              ? 'text-gray-400 hover:text-red-400 hover:bg-gray-900' 
-              : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
-          }`}>
+          <button 
+            onClick={handleDelete}
+            className={`p-2 rounded-lg transition-colors ${
+              isDarkMode 
+                ? 'text-gray-400 hover:text-red-400 hover:bg-gray-900' 
+                : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
+            }`}>
             <Trash2 size={18} />
           </button>
         </div>
@@ -349,17 +355,6 @@ const NotificationDetailScreen = ({ notificationId, onBack }: NotificationDetail
 
         {/* Action Buttons */}
         <div className="flex space-x-2">
-          <Button 
-            variant="outline" 
-            className={`flex-1 ${
-              isDarkMode 
-                ? 'border-gray-800 text-gray-300 hover:bg-gray-900 hover:text-white' 
-                : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-            }`}
-            onClick={handleViewPost}
-          >
-            View Post
-          </Button>
           <Button 
             className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
             onClick={() => setShowReplyBox(!showReplyBox)}

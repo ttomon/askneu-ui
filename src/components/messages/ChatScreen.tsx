@@ -179,7 +179,11 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
                 <div className={`mb-1 p-2 rounded-lg text-xs ${
                   isDarkMode ? 'bg-gray-800 text-gray-400 border border-gray-700' : 'bg-gray-100 text-gray-600'
                 }`}>
-                  Replying to: {message.replyTo.text.substring(0, 30)}...
+                  <div className="flex items-center space-x-1 mb-1">
+                    <Reply size={12} />
+                    <span className="font-medium">{message.replyTo.sender}</span>
+                  </div>
+                  <p className="truncate">{message.replyTo.text}</p>
                 </div>
               )}
               <div
@@ -200,16 +204,14 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
                   {message.time}
                 </p>
               </div>
-              {!message.isOwn && (
-                <button
-                  onClick={() => handleReply(message)}
-                  className={`absolute -right-8 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full ${
-                    isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                  }`}
-                >
-                  <Reply size={14} />
-                </button>
-              )}
+              <button
+                onClick={() => handleReply(message)}
+                className={`absolute ${message.isOwn ? '-left-8' : '-right-8'} top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full ${
+                  isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                }`}
+              >
+                <Reply size={14} />
+              </button>
             </div>
           </div>
         ))}

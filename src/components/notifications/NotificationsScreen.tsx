@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Bell, Heart, MessageCircle, Users, User } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -10,7 +9,7 @@ const NotificationsScreen = () => {
   const { isDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNotificationId, setSelectedNotificationId] = useState<string | null>(null);
-  const [notifications] = useState([
+  const [notifications, setNotifications] = useState([
     {
       id: '1',
       type: 'like',
@@ -82,11 +81,17 @@ const NotificationsScreen = () => {
     setSelectedNotificationId(notificationId);
   };
 
+  const handleDeleteNotification = (notificationId: string) => {
+    setNotifications(notifications.filter(notif => notif.id !== notificationId));
+    setSelectedNotificationId(null);
+  };
+
   if (selectedNotificationId) {
     return (
       <NotificationDetailScreen
         notificationId={selectedNotificationId}
         onBack={() => setSelectedNotificationId(null)}
+        onDelete={handleDeleteNotification}
       />
     );
   }
