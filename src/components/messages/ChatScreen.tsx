@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Send, User, Reply, X, MoreVertical, Phone, Video } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, Send, User, Reply, X, MoreVertical, Phone, Video, Smile, Paperclip, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -28,11 +28,12 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const [otherUserTyping, setOtherUserTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       text: "Don't forget the Zoom link for our UI/UX webinar later.",
-      sender: 'EduTech Group',
+      sender: 'Study Group - Research101',
       time: '2:30 PM',
       isOwn: false
     },
@@ -46,11 +47,36 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
     {
       id: '3',
       text: 'It starts at 3:00 PM. Here is the link: https://zoom.us/j/123456789',
-      sender: 'EduTech Group',
+      sender: 'Study Group - Research101',
       time: '2:33 PM',
       isOwn: false
     }
   ]);
+
+  // Auto-scroll to bottom when new messages arrive
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Hide bottom navigation when component mounts
+  useEffect(() => {
+    const bottomNav = document.querySelector('[class*="bottom-0"]');
+    if (bottomNav) {
+      (bottomNav as HTMLElement).style.display = 'none';
+    }
+
+    // Show bottom navigation when component unmounts
+    return () => {
+      const bottomNav = document.querySelector('[class*="bottom-0"]');
+      if (bottomNav) {
+        (bottomNav as HTMLElement).style.display = 'flex';
+      }
+    };
+  }, []);
 
   // Simulate typing indicator
   useEffect(() => {
@@ -115,10 +141,17 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
     setReplyingTo(null);
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
-    <div className={`min-h-screen flex flex-col max-w-md mx-auto ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
+    <div className={`h-screen flex flex-col max-w-md mx-auto ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
       {/* Enhanced Header */}
-      <div className={`shadow-sm px-4 py-3 flex-shrink-0 ${isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-100'}`}>
+      <div className={`shadow-sm px-4 py-3 flex-shrink-0 border-b ${isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-100'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <button
@@ -141,7 +174,7 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <button className={`p-2 rounded-lg transition-colors ${
               isDarkMode 
                 ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-900' 
@@ -168,90 +201,95 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
       </div>
 
       {/* Messages */}
-      <div className="flex-1 p-4 space-y-4 overflow-y-auto pb-20">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className="relative group max-w-xs">
-              {message.replyTo && (
-                <div className={`mb-1 p-2 rounded-lg text-xs ${
-                  isDarkMode ? 'bg-gray-800 text-gray-400 border border-gray-700' : 'bg-gray-100 text-gray-600'
-                }`}>
-                  <div className="flex items-center space-x-1 mb-1">
-                    <Reply size={12} />
-                    <span className="font-medium">{message.replyTo.sender}</span>
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-4 space-y-4">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className="relative group max-w-[80%]">
+                {message.replyTo && (
+                  <div className={`mb-1 p-2 rounded-lg text-xs ${
+                    isDarkMode ? 'bg-gray-800 text-gray-400 border border-gray-700' : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    <div className="flex items-center space-x-1 mb-1">
+                      <Reply size={12} />
+                      <span className="font-medium">{message.replyTo.sender}</span>
+                    </div>
+                    <p className="truncate">{message.replyTo.text}</p>
                   </div>
-                  <p className="truncate">{message.replyTo.text}</p>
+                )}
+                <div
+                  className={`px-4 py-3 rounded-2xl ${
+                    message.isOwn
+                      ? 'bg-blue-600 text-white rounded-br-md'
+                      : isDarkMode 
+                        ? 'bg-gray-800 border border-gray-700 text-gray-200 rounded-bl-md'
+                        : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'
+                  }`}
+                >
+                  <p className="text-sm leading-relaxed">{message.text}</p>
+                  <p className={`text-xs mt-1 ${
+                    message.isOwn 
+                      ? 'text-blue-100' 
+                      : isDarkMode ? 'text-gray-500' : 'text-gray-500'
+                  }`}>
+                    {message.time}
+                  </p>
                 </div>
-              )}
-              <div
-                className={`px-4 py-2 rounded-lg ${
-                  message.isOwn
-                    ? 'bg-blue-600 text-white'
-                    : isDarkMode 
-                      ? 'bg-gray-900 border border-gray-800 text-gray-200'
-                      : 'bg-white border border-gray-200 text-gray-800'
-                }`}
-              >
-                <p className="text-sm">{message.text}</p>
-                <p className={`text-xs mt-1 ${
-                  message.isOwn 
-                    ? 'text-blue-100' 
-                    : isDarkMode ? 'text-gray-500' : 'text-gray-500'
-                }`}>
-                  {message.time}
-                </p>
-              </div>
-              <button
-                onClick={() => handleReply(message)}
-                className={`absolute ${message.isOwn ? '-left-8' : '-right-8'} top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full ${
-                  isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                }`}
-              >
-                <Reply size={14} />
-              </button>
-            </div>
-          </div>
-        ))}
-        
-        {/* Typing Indicator */}
-        {otherUserTyping && (
-          <div className="flex justify-start">
-            <div className={`px-4 py-2 rounded-lg max-w-xs ${
-              isDarkMode 
-                ? 'bg-gray-900 border border-gray-800 text-gray-400'
-                : 'bg-white border border-gray-200 text-gray-600'
-            }`}>
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <button
+                  onClick={() => handleReply(message)}
+                  className={`absolute ${message.isOwn ? '-left-8' : '-right-8'} top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full ${
+                    isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  }`}
+                >
+                  <Reply size={14} />
+                </button>
               </div>
             </div>
-          </div>
-        )}
+          ))}
+          
+          {/* Typing Indicator */}
+          {otherUserTyping && (
+            <div className="flex justify-start">
+              <div className={`px-4 py-3 rounded-2xl rounded-bl-md max-w-[80%] ${
+                isDarkMode 
+                  ? 'bg-gray-800 border border-gray-700 text-gray-400'
+                  : 'bg-white border border-gray-200 text-gray-600'
+              }`}>
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* Reply Banner */}
       {replyingTo && (
-        <div className={`border-t px-4 py-2 ${
+        <div className={`border-t px-4 py-3 ${
           isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-gray-100 border-gray-200'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Reply size={16} className={isDarkMode ? 'text-gray-400' : 'text-gray-600'} />
-              <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              <Reply size={16} className={isDarkMode ? 'text-blue-400' : 'text-blue-600'} />
+              <span className={`text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
                 Replying to {replyingTo.sender}
               </span>
             </div>
-            <button onClick={cancelReply} className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+            <button onClick={cancelReply} className={`p-1 rounded-full transition-colors ${
+              isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+            }`}>
               <X size={16} />
             </button>
           </div>
-          <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-            {replyingTo.text.substring(0, 50)}...
+          <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} truncate`}>
+            {replyingTo.text}
           </p>
         </div>
       )}
@@ -260,31 +298,53 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
       <div className={`border-t p-4 flex-shrink-0 ${
         isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'
       }`}>
+        <div className="flex items-end space-x-2">
+          <button className={`p-2 rounded-full transition-colors ${
+            isDarkMode ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-900' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+          }`}>
+            <Paperclip size={18} />
+          </button>
+          
+          <div className="flex-1 relative">
+            <Input
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type a message..."
+              className={`pr-10 resize-none min-h-[44px] ${
+                isDarkMode 
+                  ? 'border-gray-700 bg-gray-900 text-white placeholder-gray-400 focus:border-blue-500'
+                  : 'border-gray-300 bg-gray-50 focus:border-blue-600 focus:ring-blue-600'
+              }`}
+              onKeyPress={handleKeyPress}
+            />
+            <button className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-colors ${
+              isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'
+            }`}>
+              <Smile size={16} />
+            </button>
+          </div>
+
+          {newMessage.trim() ? (
+            <Button
+              onClick={handleSendMessage}
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-11 h-11 p-0"
+            >
+              <Send size={18} />
+            </Button>
+          ) : (
+            <button className={`p-2 rounded-full transition-colors ${
+              isDarkMode ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-900' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+            }`}>
+              <Mic size={18} />
+            </button>
+          )}
+        </div>
+        
         {isTyping && (
-          <div className={`text-xs mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+          <div className={`text-xs mt-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
             You are typing...
           </div>
         )}
-        <div className="flex space-x-2">
-          <Input
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type a message..."
-            className={`flex-1 ${
-              isDarkMode 
-                ? 'border-gray-800 bg-black text-white placeholder-gray-400 focus:border-blue-500'
-                : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
-            }`}
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-          />
-          <Button
-            onClick={handleSendMessage}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-            size="sm"
-          >
-            <Send size={16} />
-          </Button>
-        </div>
       </div>
     </div>
   );
