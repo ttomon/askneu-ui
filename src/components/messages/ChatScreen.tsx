@@ -62,18 +62,19 @@ const ChatScreen = ({ conversationId, conversationName, onBack }: ChatScreenProp
     scrollToBottom();
   }, [messages]);
 
-  // Hide bottom navigation when component mounts
+  // Hide bottom navigation when component mounts and show when unmounts
   useEffect(() => {
-    const bottomNav = document.querySelector('[class*="bottom-0"]');
+    // Hide bottom navigation immediately when chat opens
+    const bottomNav = document.querySelector('.fixed.bottom-0') as HTMLElement;
     if (bottomNav) {
-      (bottomNav as HTMLElement).style.display = 'none';
+      bottomNav.style.display = 'none';
     }
 
-    // Show bottom navigation when component unmounts
+    // Show bottom navigation when component unmounts (going back)
     return () => {
-      const bottomNav = document.querySelector('[class*="bottom-0"]');
+      const bottomNav = document.querySelector('.fixed.bottom-0') as HTMLElement;
       if (bottomNav) {
-        (bottomNav as HTMLElement).style.display = 'flex';
+        bottomNav.style.display = 'flex';
       }
     };
   }, []);
